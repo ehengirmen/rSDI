@@ -5,11 +5,11 @@
 #' given their longitude and latitude in decimal degrees.
 #' It uses the Haversine formula, which accounts for the Earth's curvature.
 #'
-#' @param lon1 Longtitude of the first point in decimal degrees.
+#' @param lon1 Longitude of the first point in decimal degrees.
 #' @param lat1 Latitude of the first point in decimal degrees.
 #' @param lon2 Longitude of the second point in decimal degrees.
 #' @param lat2 Latitude of the second point in decimal degrees.
-#' @param R The radius of the Eart in kilometers.
+#' @param R The radius of the Earth in kilometers.
 #'
 #' @return The distance between the two points in kilometers.
 

@@ -13,7 +13,7 @@ euclidean(lon1, lat1, lon2, lat2)
 
 \item{lon2}{Longitude of the second point in decimal degrees.}
 
-\item{lat2}{Latitude of the second point in decimal degress.}
+\item{lat2}{Latitude of the second point in decimal degrees.}
 }
 \value{
 The Euclidean distance between the two points.

@@ -7,7 +7,7 @@
 haversine(lon1, lat1, lon2, lat2, R = 6371)
 }
 \arguments{
-\item{lon1}{Longtitude of the first point in decimal degrees.}
+\item{lon1}{Longitude of the first point in decimal degrees.}
 
 \item{lat1}{Latitude of the first point in decimal degrees.}
 
@@ -15,7 +15,7 @@ haversine(lon1, lat1, lon2, lat2, R = 6371)
 
 \item{lat2}{Latitude of the second point in decimal degrees.}
 
-\item{R}{The radius of the Eart in kilometers.}
+\item{R}{The radius of the Earth in kilometers.}
 }
 \value{
 The distance between the two points in kilometers.

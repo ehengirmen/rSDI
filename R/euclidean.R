@@ -8,7 +8,7 @@
 #' @param lon1 Longitude of the first point in decimal degrees.
 #' @param lat1 Latitude of the first point in decimal degrees.
 #' @param lon2 Longitude of the second point in decimal degrees.
-#' @param lat2 Latitude of the second point in decimal degress.
+#' @param lat2 Latitude of the second point in decimal degrees.
 #'
 #' @return The Euclidean distance between the two points.
 #'
