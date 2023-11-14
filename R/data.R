@@ -33,4 +33,5 @@
 #'   \item{label}{Name of the province capital city}
 #'   \item{longitude, latitude}{spatial coordinates of the province capital}
 #' }
+#' @source The latitude/longitude of Turkish province capitals was shared as a courtesy of Başarsoft LLC
 "TurkiyeMigration.nodes"
