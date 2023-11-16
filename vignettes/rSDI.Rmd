@@ -1,0 +1,130 @@
+---
+title: "rSDI"
+author: Mehmet Gençer
+output: 
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+bibliography: SDI.bib
+link-citations: TRUE
+vignette: >
+  %\VignetteIndexEntry{rSDI}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo=F,
+  warning = F,
+  message = F
+)
+```
+
+```{r setup}
+#library(rSDI)
+```
+
+# Spatial Dispersion Index (SDI) for Analysis of Activity Outreach in Spatial and Geographic Networks
+
+Consider a network of movements or exchanges between places. This is commonplace in socio-economic activities. For example: when you order something from Amazon, the movement of your package from one warehouse to the next is part of Amazon's shipment network, or even part of the global shipment network. Our commutes to work in the morning can be considered a commute network between neighborhoods/cities/offices. Each of these cases can be considered as an specialized instance of the mathematical concept of 'graph' called spatial graph: a graph consisting of vertices with fixed locations, and arcs/edges connecting these vertices.
+
+In social and economic sciences analysis of relations in such a network is very interesting, and with the recent availability and coverage of spatial network data, very useful for managerial planning in private firms and policy decisions such as urban planning in public agencies. On the other hand metrics concerning spatial aspects of networks are almost always problem specific and not general. Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial distances of movements in a network in a problem neutral way, thus aims to address this problem. The core idea of the index was conceived as part of a large scale government commissioned   [study report, in Turkish](https://www.kalkinmakutuphanesi.gov.tr/dokuman/yer-sis-iller-ve-bolgeler-arasi-sosyo-ekonomik-ag-iliskileri-raporu/2591) [@Gencer2021], with live analysis at <https://yersis.gov.tr/web>. It was later was generalized and published on its own merit, and explained in detail [in the paper](https://dx.doi.org/10.1007/s12061-023-09545-8) [@gencer2023sdi].
+
+rSDI package provides functions to compute SDI family of indices for spatial graphs in conjunction with its definition the paper [@gencer2023sdi]. rSDI also provides some convenience functions to visualize SDI index measurements. While this is not its primary reason of existence it is often very practical for the user to have some preliminary visualization at arm's length. In sections 2 and 3 below we first explain the concept of spatial networks and their data, then review mathematical graph formalism to represent spatial networks. Then we introduce the SDI index family's calculation, its interpretation, and thumb rules for choosing an index for your analyses. The last two sections provide a run through of index calculation then visualization features of the rSDI package using an example data set provided by the package, on human migration between provinces of Turkiye.
+
+# Spatial networks and their data
+
+Spatial networks are represented as a particular type of graph where the graph nodes (vertices) are fixed locations and each graph arc/edge represent a flow/relation between two of these nodes. In most real life cases these networks represent varying flows of people (e.g. transportation), good (e.g. trade, shopping), or information (e.g. Internet data transfer, phone call). Thus the graph is weighted and directed and has arcs, rather than edges. Also in most cases the network is geospatial.  In geospatial networks the locations of vertices in the representing graph are, for example, cities, airports, etc., and are defined with their latitude and longitude. This is the case for most examples of movements related to trade, migration, education, services, etc. In other cases the spatial network may span a smaller space and is rather measured on its own Cartesian references; for example in the case of student movement on a campus, or movement of parts in a production facility. In those latter cases vertices (e.g. campus library, a welding station) have an x-y position defined with respect to a chosen corner or center of the campus, production facility, etc. 
+
+Spatial network data consists of two data frames: one representing the flows and the other detailing the locations, and possibly labels of nodes in the network. The following is a simple, imaginary spatial network data:
+
+```{r}
+flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+flowsWithDistances<-flows
+flowsWithDistances$distance <- c(5,5,3)
+library(igraph)
+g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+library(ggplot2)
+library(ggraph)
+library(ggimage)
+url<-"https://static.wikia.nocookie.net/lotr/images/5/59/Middle-earth.jpg/revision/latest?cb=20060726004750"
+
+lay <- create_layout(g, 'manual', x=V(g)$x, y=V(g)$y)
+p<-ggraph(lay) +
+  geom_edge_bend(aes(label=E(g)$weight), label_size=10,strength=0.4,edge_width=3,alpha=0.3,arrow = arrow(length = unit(10, 'mm')))+
+  #geom_node_point(size = 10, aes(color="yellow"),alpha=0.4) +
+  geom_node_point(size=10)+
+  geom_node_text(label=V(g)$name, size=10, vjust=-0.7,hjust=1)+
+  xlim(-3,5)+ylim(-2,4)
+p<-ggbackground(p, url)
+```
+
+```{r , fig.show="hold", out.width="50%"}
+knitr::kable(list(flows,nodes),booktabs = TRUE, valign = 't',caption = 'Data frames providing flows (left) and nodes (right) for an imaginary spatial network')
+```
+
+This spatial network is visualized below, showing node locations as well as flow amounts (weights) on lines representing edges:
+
+```{r, fig.width=7, fig.height=5}
+p
+```
+
+# Graph notation to represent spatial networks
+
+A spatial network, $N$, is represented with the mathematical concept of graph, which consists of vertices, $V$, representing the locations/nodes in the spatial network and ties/edges, $E$ representing flows tying them together into a network, thus $N=(V,E)$. To capture a flow over an edge $e_{ij}$ from vertex $i$ to vertex $j$ let us denote the amount of flow on the edge as edge weight $w_{i\rightarrow j}$. In graph theoretic terms this corresponds to a directed and weighted graph.
+
+To capture spatial aspects of the network let $p_i=<x_i,y_i>$ and $p_j=<x_j, y_j>$ denote locations of vertices $i$ and $j$, respectively, in some two dimensional space such as Cartesian or geographic locations. In the latter, the coordinates $x$ and $y$ would denote the longitude and latitude of a geographical location, respectively. One can now speak of a spatial distance, $\delta_{ij}$, between any two vertices. In the case of geographical networks Haversine distance would be appropriate for determining spherical distances between two locations:
+
+\begin{equation}
+\delta^{H}_{ij}=2R\arcsin\left(\sqrt{\sin^{2}\left({\frac{y_j-y_i}{2}}\right)+\cos(\varphi_{i})\cos(\varphi_{j})\sin^{2}\left({\frac{x_j-x_i}{2}}\right)}\right)
+\end{equation}
+Where $R$ is the radius of the Earth, which is roughly $6,371$ km. 
+
+In the case of a more local spatial network we would probably have Cartesian coordinates, e.g. x-y coordinates within a production plant, of which we analyse flows of parts between stations. In those cases an Euclidean distance can be used instead:
+\begin{equation}
+\delta^E_{ij}=\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}
+\end{equation}
+
+In our toy example from the previous section the Euclidean distances can be easily calculated (since it is a simple 3-4-5 triangle) for each edge as follows (defaulting to Euclidean distance for Middle Earth, since we have no latitude/longitude information about it):
+```{r}
+knitr::kable(flowsWithDistances,booktabs = TRUE, valign = 't',caption = 'The flow data with distances between the source and target location of  flows added')
+```
+
+# SDI: Definition and uses
+
+In order to quantify spatial reach of the flows in a spatial network, the spatial distance of two nodes should be incorporated with the flow between the nodes. The Spatial Dispersion Index here is a direct translation of this idea and is broadly defined as the weighted average distances the network flows span, wighted by flow amounts. The key idea was conceived by the author, explained thoroughly and put into use in a broader field study report [@gencer2023sdi]. A brief discussion and definition is presented here.
+
+SDI is a family of indices rather than a single index. The reason for its variants is related to differential research interests  when analyzing spatial networks. Here we explain these variations, while introducing the notation to symbolize corresponding SDI variants:
+
+* First: SDI can be computed for the whole network, $\textrm{SDI}(N)$, or on a per-node basis, $\textrm{SDI}(i)$.
+* Second: Particularly when it is computed on a per-node basis, one may be interested in the dispersion of out-flows  or in-flows only, or both (undirected): ie. $\textrm{SDI}_{-}(\ldots)$, $\textrm{SDI}_{+}(\ldots)$, or $\textrm{SDI}_{\pm}(\ldots)$, where a + sign denotes out-dispersion and a - sign denotes in-dispersion indices.
+* Third: In social network analysis theory, there is an important discussion about strength of relations [@Opsahl2010]: presence of a relation has an importance as different from the strength of it. This warns us against, for example, assuming that a flow of one bird from location A-to-B in a bird migration network is negligible when compared to flow of one thousand birds from A-to-C. The very existence of A-to-B flow has an importance at its own right, as separate from its strength, e.g. for its future effects of spreading of a bird species. For this reason there a several variants of social network metrics calculations in the social networks analysis area which: 
+  - considers only presence of relations: this corresponds to unweighted SDI calculation variant which treats each flow as unit strength: $\textrm{SDI}_{\ldots}^{u}(\ldots)$
+  - considers only strength of relations: this corresponds to weighted SDI calculation variant which cares only strengths/amounts of flows: $\textrm{SDI}_{\ldots}^{w}(\ldots)$
+  - considers both presence and strength of relations, with a user given preference tuning parameter: this corresponds to generalized SDI calculation: $\textrm{SDI}_{\ldots}^{w\alpha}(\ldots)$
+  
+As an illustrative example, network level, weighted SDI index would be computed as follows ^[please note that when run over the whole network, directionality makes no difference, so we omit the $\textrm{SDI}_{\pm}(\ldots)$ notation in this one]:
+\begin{equation}
+\textrm{SDI}^w(N)=\frac{\sum_{i \rightarrow j \in E}{(w_{i\rightarrow j} \cdot \delta_{ij})}}{\sum_{i\rightarrow j \in E}{w_{i\rightarrow j}}} 
+\end{equation}
+For our toy problem this could be computed as: $\textrm{SDI}^w(N)=(10*5+20*5+5*3)/(10+20+5)$
+
+Whereas a node level, unweighted, out-flows only index would be computed by replacing all weights with 1s:
+\begin{equation}
+\textrm{SDI}^u_{+}(i)=\frac{\sum_{i\rightarrow j \in E}{(1 \cdot \delta_{ij})}}{\sum_{i\rightarrow j \in E}{1}}
+\end{equation}
+Which is simply the average of distances of the flows towards the focal node. For our toy problem's node A, this can be computed as $\textrm{SDI}^u_{+}(A)=(5+3)/2$
+
+Please consult the source paper, @gencer2023sdi, for an extensive description of index calculation for the above cases.
+
+# Example: Computing SDI
+
+# Example: Visualizing SDI measurements
+
+# Visualization
+
+The visualization features of rSDI leverages the fact that spatial graphs are often geospatial, and thus one can make use of geospatial libraries in R in combination with graph plotting to visualize these networks on a map. 
