@@ -60,7 +60,7 @@ p<-ggraph(lay) +
   geom_node_point(size=10)+
   geom_node_text(label=V(g)$name, size=10, vjust=-0.7,hjust=1)+
   xlim(-3,5)+ylim(-2,4)
-p<-ggbackground(p, url)
+p<-ggbackground(p, url) #see https://stackoverflow.com/questions/51255832/how-to-add-an-image-on-ggplot-background-not-the-panel
 ```
 
 ```{r , fig.show="hold", out.width="50%"}
@@ -121,10 +121,16 @@ Which is simply the average of distances of the flows towards the focal node. Fo
 
 Please consult the source paper, @gencer2023sdi, for an extensive description of index calculation for the above cases.
 
-# Example: Computing SDI
+# Example: Computing SDI for a geospatial network
 
-# Example: Visualizing SDI measurements
+Burada Türkiye migration örneği yapılacak
+
+# Example: Visualizing SDI measurements for a geospatial network
+
+Burada Türkiye migration örneği görselleştirmeleri yapılacak
 
 # Visualization
 
-The visualization features of rSDI leverages the fact that spatial graphs are often geospatial, and thus one can make use of geospatial libraries in R in combination with graph plotting to visualize these networks on a map. 
+The visualization features of rSDI mainly leverages the fact that spatial graphs are often geospatial, and thus one can make use of geospatial libraries in R in combination with graph plotting to visualize these networks on a map. But rSDI provides some capabilities to visualize other spatial networks such as a network of flows within a production plant, a schoolyard, etc. In these cases rSDI provides functions and parameters to use your own background of the network space and coordinates matching. These capabilities are also useful if you want to use, for example, geographic map of a region or country which has annotation features that cannot be found in standard R libraries. This section exemplifies the former case, which sufficiently exposes the functionality to handle the latter case as well.
+
+Burada Middle Earth örneği yapılabilir.
