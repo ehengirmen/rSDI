@@ -13,6 +13,9 @@ A data frame with 6480 rows and 3 columns:
   \item{longitude, latitude}{spatial coordinates of the province capital}
 }
 }
+\source{
+The latitude/longitude of Turkish province capitals was shared as a courtesy of Başarsoft LLC
+}
 \usage{
 TurkiyeMigration.nodes
 }
