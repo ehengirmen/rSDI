@@ -7,7 +7,7 @@
 #' @param g An igraph object, with nodes that have 'latitude' and 'longitude', or 'x' and 'y' attributes
 #' @param formula Optional parameter to specify the distance calculation formula to use, either 'Haversine', 'Euclidean'. By default `formula = 'NULL'` and if not specified the otherwise, the function automatically determines the formula based on the available vertex attributes. [x, y] => Euclidean, [latitude,longitude] => Haversine. Note that the `g` must have one of this set of vertex attributes.
 #'
-#' @return A numeric vector with distances calculated between each pair of nodes in the graph.
+#' @return A numeric vector with distances calculated between each pair of nodes in the graph. <NEEDS UPDATE>
 #'
 #' @examples
 #' # Assuming 'g' is a graph object with latitude and longitude or x and y attributes for each node.
@@ -107,7 +107,6 @@ dist_calc <- function(g, formula = 'NULL') {
       )
     }
   }
-  return(distance)
+  E(g)$distance <- distance
+  return(g)
 }
-
-
