@@ -12,6 +12,8 @@ SDI_MODIFIED <- function (g, distance.calculation = NULL, level="vertex",variant
   } else {
     # if null: check if distance is already calculated
     if(is.null(E(g)$distance)){
+      warning('No "distance" attribute found in edges. `SDI` computed and
+      added edge distance attributes based on coordinate attributes.')
       g <- dist_calc(g)
     }
   }
