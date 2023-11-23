@@ -161,6 +161,16 @@ edge_attr_names(toyGraphWithSDI)
 vertex_attr_names(toyGraphWithSDI)
 ```
 
+```{r eval=FALSE, echo=FALSE}
+# Hocam SDI fonksiyonu değil SDI_MODIFIED üzerinde çalışıyorum SDI kaybolmasın diye.
+# Bu nedenle bu örneği SDI_MODIFIED ile ekledim. directionality argümanını henüz eklemedim
+
+toyGraphWithSDI <- SDI_MODIFIED(toyGraph)
+edge_attr(toyGraphWithSDI)
+vertex_attr(toyGraphWithSDI)
+```
+
+
 To help its user follow the theoretical distinctions explained in the previous section, rSDI letter codes the index measurements it measures şn accordance with that classification. The above call computes (1) **v**ertex level, (2) **u**ndirected,, and (3) **w**eighted SDI index, which is the default. Thus to each vertex of its input graph it adds and attribute named 'SDI_vuw'. The attribute is added to each vertex even if the index cannot be computed. This is the case for vertex D which has an NA value stored in its 'SDI_vuw' attribute:
 ```{r}
 vertex_attr(toyGraphWithSDI, "SDI_vuw")
