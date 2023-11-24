@@ -48,24 +48,28 @@ dist_calc <- function(g, formula = 'NULL') {
 
   # get edges
   edges_g <- get.edgelist(g)
-  # columns may include l-C letter
-  vertexAttrs <- tolower(vertex_attr_names(g))
+  # columns may include lower-Capital case letters
+  # lower them, change them in g to lowercase
+  # then revert this change before returning g
+  vertexAttrsOld <-vertex_attr_names(g)
+  vertexAttrsNew <- tolower(vertex_attr_names(g))
+  names(vertex_attr(g)) <- vertexAttrsNew
 
   if(formula == 'Euclidean'){
-    if(!('x' %in% vertexAttrs) || !('y' %in% vertexAttrs)){
+    if(!('x' %in% vertexAttrsNew) & !('y' %in% vertexAttrsNew)){
       stop('The igraph object must have x & y vertices for distances to be calculated.')
     }
   } else if (formula == 'Haversine'){
-    if(!('latitude' %in% vertexAttrs) || !('longitude' %in% vertexAttrs)){
+    if(!('latitude' %in% vertexAttrsNew) & !('longitude' %in% vertexAttrsNew)){
       stop('The igraph object must have latitude & longitude vertices for distances to be calculated.')
     }
   } else if(formula == 'NULL'){
-    if ('x' %in% vertexAttrs && 'y' %in% vertexAttrs){
+    if (('x' %in% vertexAttrsNew) & ('y' %in% vertexAttrsNew)){
       formula <- 'Euclidean'
-    } else if ('latitude' %in% vertexAttrs && 'longitude' %in% vertexAttrs){
+    } else if (('latitude' %in% vertexAttrsNew) & ('longitude' %in% vertexAttrsNew)){
       formula <- 'Haversine'
     } else {
-      formula <- 'Haversine'
+      stop("Requires x&y or lat.&long. values <UPDATE THIS MESSAGE>")
     }
   }
 
@@ -107,6 +111,7 @@ dist_calc <- function(g, formula = 'NULL') {
       )
     }
   }
+  names(vertex_attr(g)) <- vertexAttrsOld
   E(g)$distance <- distance
   return(g)
 }
