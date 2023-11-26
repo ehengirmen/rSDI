@@ -1,8 +1,11 @@
 # 7
 
-# TO DO: SDI takes data files and creates g then continues...
+# TO DO
+# 1. SDI should be able to calculate multiple variants
+# 2. SDI should be able to take data frames and create g from them.
 # check for improvements, potential tests.
 # ask about the directioanlity: does undirected mean mode set to 'all', or graph_from_data_frame(..., directed = F)?
+#
 
 SDI <- function (g, distance.calculation = NULL, level="vertex",
                  weight.use="weighted",directionality="undirected",
@@ -35,11 +38,11 @@ SDI <- function (g, distance.calculation = NULL, level="vertex",
 
     if (!givenLevel %in% substr(levels,1,1)){
       stop('Invalid first letter for the variant level: can be either "u"(undirected), or "d"(directed).')}
-    else if (!givenWeight %in% substr(weights,1,1)){
-      stop('Invalid second letter entry for the variant weight: can be either "w"(weighted), or "u"(unweighted).' )
-    } else if(!givenDirection %in% substr(directions,1,1)){
-      stop('Invalid third letter for the variant direction: can be "u"(undirected), "i"(in), or "o"(out)')
+    else if(!givenDirection %in% substr(directions,1,1)){
+      stop('Invalid second letter for the variant direction: can be "u"(undirected), "i"(in), or "o"(out)')
       # direction cannot be all right? all is the same as undirected? ASK!!
+    } else if (!givenWeight %in% substr(weights,1,1)){
+      stop('Invalid third letter entry for the variant weight: can be either "w"(weighted), or "u"(unweighted).' )
     }
 
     level <- levels[startsWith(levels, givenLevel)]
