@@ -1,92 +1,33 @@
 # 7
 
 # TO DO
-# 1. SDI should be able to calculate multiple variants
-# 2. SDI should be able to take data frames and create g from them.
-# check for improvements, potential tests.
-# ask about the directioanlity: does undirected mean mode set to 'all', or graph_from_data_frame(..., directed = F)?
-#
+# 1. SDI should be able to take data frames and create g from them.
+# 2. SDI takes alpha value?
 
-SDI <- function (g, distance.calculation = NULL, level="vertex",
-                 weight.use="weighted",directionality="undirected",
+
+SDI <- function (g, distance.calculation = NULL, level = "vertex",
+                 weight.use = "weighted", directionality = "undirected",
                  variant = NULL) {
-  #------------------------------------------------------
-  # If distance calculation method is not given, calculate it and add it to g.
-  # Also warn the user about it. Is warning necessary?
-  if(!is.null(distance.calculation)){
-    if(!distance.calculation %in% c('Haversine', 'Euclidean')) stop("Invalid 'distance.calculation' argument")
+  # Distance calculation
+  if (!is.null(distance.calculation)) {
     g <- dist_calc(g, formula = distance.calculation)
   } else {
-    # if null: check if distance is already calculated
-    if(is.null(E(g)$distance)){
-      warning('No "distance" attribute found in edges. `SDI` computed and
-      added edge distance attributes based on coordinate attributes.')
+    if (is.null(E(g)$distance)) {
       g <- dist_calc(g)
     }
   }
-  #------------------------------------------------------
-  # variant arguement
-  # if user gives a variant use them as other argument values
-  if (!is.null(variant)){
-    levels <- c('network', 'vertex')
-    weights <- c('weighted', 'unweighted')
-    directions <- c('undirected', 'in', 'out', 'all')
-
-    givenLevel <- substr(variant,1,1)
-    givenDirection <- substr(variant,2,2)
-    givenWeight <- substr(variant,3,3)
-
-    if (!givenLevel %in% substr(levels,1,1)){
-      stop('Invalid first letter for the variant level: can be either "v"(vertex), or "n"(network).')}
-    else if(!givenDirection %in% substr(directions,1,1)){
-      stop('Invalid second letter for the variant direction: can be "u"(undirected), "i"(in), or "o"(out)')
-      # direction cannot be all right? all is the same as undirected? ASK!!
-    } else if (!givenWeight %in% substr(weights,1,1)){
-      stop('Invalid third letter entry for the variant weight: can be either "w"(weighted), or "u"(unweighted).' )
+  # Check if a variant is provided
+  if (!is.null(variant) && length(variant) > 0) {
+    for (v in variant) {
+      parsedVariant <- variantParser(v)
+      g <- SDIcomputer(g, parsedVariant$level, parsedVariant$weight.use, parsedVariant$directionality,
+                       if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality)
     }
-
-    level <- levels[startsWith(levels, givenLevel)]
-    weight.use <- weights[startsWith(weights, givenWeight)]
-    directionality <- directions[startsWith(directions, givenDirection)]
-
-  }
-  # I am assuming (i dont know why) undirected directionality is equal to setting mode 'all'
-  if (directionality == 'undirected'){
-    mode <- 'all'} else {
-      mode <- directionality
-    }
-  #------------------------------------------------------
-  # match the arguemnts to relevant functions
-  # for network return g with graph attributes
-  # for vertex return g with vertex attributes
-
-  if (level=="network") {
-    if (weight.use=="weighted") {
-      SDI_value <-  weightedNetworkSDI(g)
-      g <- set_graph_attr(g, name = 'SDI_nuw', value = SDI_value)
-      return(g)
-    }
-    else if (weight.use=="unweighted"){
-      SDI_value <- unweightedNetworkSDI(g)
-      g <- set_graph_attr(g, name = 'SDI_nuu', value = SDI_value)
-      return(g)
-    }
-    else stop("Invalid 'weight.use' argument")
-  } else if (level=="vertex") {
-    if (weight.use=="weighted") {
-      SDIname <-paste0('SDI_','v',substr(directionality,1,1),'w')
-      SDI_value <- weightedAllVerticesSDI(g, mode=mode)
-      g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
-      return(g)
-    }
-    else if (weight.use=="unweighted") {
-      SDIname <- paste0('SDI_','v',substr(directionality,1,1),'u')
-      SDI_value <- unweightedAllVerticesSDI(g, mode=mode)
-      g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
-      return(g)
-    }
-    else stop("Invalid 'weight.use' argument")
   } else {
-    stop("Invalid 'level' argument")
+    # Use the provided level, weight.use, and directionality
+    mode <- if (directionality == 'undirected') 'all' else directionality
+    g <- SDIcomputer(g, level, weight.use, directionality, mode)
   }
+  return(g)
 }
+
