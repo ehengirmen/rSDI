@@ -1,13 +1,23 @@
 # 7
 
 # TO DO
-# 1. SDI should be able to take data frames and create g from them.
-# 2. SDI takes alpha value?
+# 1. SDI takes alpha value.
+# 2. improve readability, tests
 
 
-SDI <- function (g, distance.calculation = NULL, level = "vertex",
+SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "vertex",
                  weight.use = "weighted", directionality = "undirected",
                  variant = NULL) {
+  # check the type of inputs
+  # if data frames => crete an igraph obj
+  # flows are data frame if nodes are given, else an igraph
+  if (!is.null(nodes) && 'data.frame' %in% class(flows)){
+    g <- graph_from_data_frame(flows, directed = T, vertices = nodes)
+  } else if ('igraph' %in% class(flows)){
+    g <- flows
+  } else {
+    stop('Invalid input: please provide a data frame or an i graph object.')
+  }
   # Distance calculation
   if (!is.null(distance.calculation)) {
     g <- dist_calc(g, formula = distance.calculation)

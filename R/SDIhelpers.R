@@ -46,7 +46,6 @@ variantParser <- function(variant){
     stop('Invalid first letter for the variant level: can be either "v"(vertex), or "n"(network).')}
   else if(!givenDirection %in% substr(directions,1,1)){
     stop('Invalid second letter for the variant direction: can be "u"(undirected), "i"(in), or "o"(out)')
-    # direction cannot be all right? all is the same as undirected? ASK!!
   } else if (!givenWeight %in% substr(weights,1,1)){
     stop('Invalid third letter entry for the variant weight: can be either "w"(weighted), or "u"(unweighted).' )
   }
