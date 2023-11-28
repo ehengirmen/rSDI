@@ -203,6 +203,7 @@ toyGraph %>%
 Note that for the generalized SDI variant you must provide the additional $\alpha$ parameter:
 ```{r eval=FALSE, echo=TRUE}
 SDI(toyGraph, variant="vug", alpha=0.5)
+# SDIwithAlpha(toyGraph, varaint = 'vug', alpha = 0.5)
 ```
 
 # Example: Computing and plotting SDI for a geospatial network
