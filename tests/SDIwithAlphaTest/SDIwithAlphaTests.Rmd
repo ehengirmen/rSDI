@@ -1,0 +1,167 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# SDIwithAlpha
+
+SDIwithAlpha is the same as SDI but alpha argument is implemented.  This document is temporary to see if expected outputs are supplied. The function is at very early stage, here i am just testing and correcting stuff
+
+
+
+## toyGraph
+```{r}
+rm(list=ls())
+devtools::load_all()
+```
+
+
+Toy graph
+```{r}
+flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+flowsWithDistances<-flows
+library(igraph)
+toyGraph <- graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+
+attributes(toyGraph)
+```
+
+
+
+Test 1.
+
+```{r}
+vuw <- vertex_attr(SDI(toyGraph, variant = 'vuw'), 'SDI_vuw')
+vuu <- vertex_attr(SDI(toyGraph, variant = 'vuu'), 'SDI_vuu')
+
+vuw
+vuu
+
+alpha = 0.7
+vuu^(alpha) + vuw^(1-alpha)
+```
+
+```{r}
+vertex_attr(SDIwithAlpha(toyGraph, variant = 'vug', alpha = alpha), 'SDI_vug')
+
+vertex_attr(SDIwithAlpha(toyGraph, level = 'vertex', directionality = 'undirected', weight.use = 'generalized', alpha = alpha), 'SDI_vug')
+```
+
+
+Test 2
+
+```{r}
+viw <- vertex_attr(SDI(toyGraph, variant = 'viw'), 'SDI_viw')
+viu <- vertex_attr(SDI(toyGraph, variant = 'viu'), 'SDI_viu')
+
+viw
+viu
+
+alpha = 0.7
+viu^(alpha) + viw^(1-alpha)
+```
+
+```{r}
+vertex_attr(SDIwithAlpha(toyGraph, variant = 'vig', alpha = alpha), 'SDI_vig')
+```
+
+Test 3.
+
+```{r}
+vow <- vertex_attr(SDI(toyGraph, variant = 'vow'), 'SDI_vow')
+vou <- vertex_attr(SDI(toyGraph, variant = 'vou'), 'SDI_vou')
+
+vow
+vou
+
+alpha = 0.7
+vou^(alpha) + vow^(1-alpha)
+```
+
+```{r}
+vertex_attr(SDIwithAlpha(toyGraph, variant = 'vog', alpha =alpha), 'SDI_vog')
+
+vertex_attr(SDIwithAlpha(toyGraph, level = 'vertex', directionality = 'out', weight.use = 'generalized', alpha =alpha), 'SDI_vog')
+```
+
+
+```{r}
+nuw <- graph_attr(SDI(toyGraph, variant = 'now'), 'SDI_nuw')
+nuu <- graph_attr(SDI(toyGraph, variant = 'nou'), 'SDI_nuu')
+
+nuw
+nuu
+
+alpha = 0.7
+nuu^(alpha) + nuw^(1-alpha)
+```
+
+```{r}
+graph_attr(SDIwithAlpha(toyGraph, variant = 'nug', alpha = alpha))
+graph_attr(SDIwithAlpha(toyGraph, level = 'network', directionality = 'undirected', weight.use = 'generalized', alpha = alpha))
+```
+
+
+
+```{r}
+SDIwithAlpha(toyGraph, variant = 'nug', alpha = alpha) %>% 
+  SDIwithAlpha(toyGraph, variant = 'vug', alpha = alpha) -> ff
+
+vertex_attr(ff)
+graph_attr(ff)
+```
+
+# Migration
+
+1
+```{r}
+vuw <- vertex_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw"), 'SDI_vuw')
+vuu <- vertex_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuu"), 'SDI_vuu')
+
+vuu
+vuw
+
+alpha = 0.4
+vuu^(alpha) + vuw^(1-alpha)
+```
+
+```{r}
+vertex_attr(SDIwithAlpha(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant = 'vug', alpha = alpha),'SDI_vug')
+```
+2
+
+```{r}
+viw <- vertex_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="viw"), 'SDI_viw')
+viu <- vertex_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="viu"), 'SDI_viu')
+
+viu
+viw
+
+alpha = 0.4
+viu^(alpha) + viw^(1-alpha)
+```
+
+```{r}
+vertex_attr(SDIwithAlpha(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant = 'vig', alpha = alpha),'SDI_vig')
+```
+3
+
+```{r}
+nuw <- graph_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="nuw"), 'SDI_nuw')
+nuu <- graph_attr(SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="nuu"), 'SDI_nuu')
+
+nuu
+nuw
+
+alpha = 0.4
+nuu^(alpha) + nuw^(1-alpha)
+```
+
+```{r}
+graph_attr(SDIwithAlpha(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant = 'nug', alpha = alpha),'SDI_nug')
+```
+
+
+
+
