@@ -224,13 +224,13 @@ TMSDI <- SDI(TMgraph, variant="vuw")
 rSDI plotting functions make use of available open map packages in the R ecosystem to make a geographical plot of SDI measurements:
 
 ```{r echo=T, eval=F}
-plotSDI(TMSDI, variant="vuw")
+plot.SDI(TMSDI, variant="vuw")
 ```
 
 The `plotSDI()` function produces a visualization where the circles for each note has an area proportional to the node's selected SDI measure. The function will try to optimize the circle sizes as best as it can, but you can customize circle sizes, fill colors, etc. by overriding its parameters. For example you can scale the circles sizes relative to its default as:
 
 ```{r echo=T, eval=F}
-plotSDI(TMSDI, variant="vuw", circle.size.scale=1.5)
+plot.SDI(TMSDI, variant="vuw", circle.size.scale=1.5)
 ```
 
 Please refer to documentation of `plotSDI()` fur further fine grained control of its plotting parameters.
@@ -241,7 +241,7 @@ Often one needs to visualize multiple SDI index calculations for comparison. In 
 
 ```{r echo=T, eval=F}
 TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plotSDI(TMSDI, variant=c("viw","vow"))
+plot.SDI(TMSDI, variant=c("viw","vow"))
 ```
 
 While there is no limit to how many indices you can visualize on a single plot, it is generally not feasible to use more than two. This is because circles for each index is overlaid on to of one another with some opacity and too many overlays would not be much readable.
@@ -250,7 +250,7 @@ Plot customization for multi-index plots works in a similar fashion to single in
 
 ```{r echo=T, eval=F}
 TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plotSDI(TMSDI, variant=c("viw","vow"), 
+plot.SDI(TMSDI, variant=c("viw","vow"), 
         circle.color=c("red","orange"))
 ```
 
@@ -258,7 +258,7 @@ On the other hand, resizing and other aspects of circles are only at the whole p
 
 ```{r echo=T, eval=F}
 TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plotSDI(TMSDI, variant=c("viw","vow"), 
+plot.SDI(TMSDI, variant=c("viw","vow"), 
         circle.color=c("red","orange"),
         circle.size.scale=1.4)
 ```
