@@ -148,20 +148,20 @@ edge_attr_names(toyGraph)
 
 Calling the `dist_calc()` function adds a distance attribute to its input graph:
 
-```{r eval=FALSE, echo=TRUE}
+```{r eval=T, echo=TRUE}
 toyGraphWithDistances <- dist_calc(toyGraph)
 edge_attr_names(toyGraphWithDistances)
 ```
 
 Having seen the coordinate attributes as 'x' and 'y' (rather than as 'latitude' and 'longitude') the function opts for a Euclidean distance calculation and returns the 3-4-5 triangle distances:
 
-```{r eval=FALSE, echo=TRUE}
+```{r eval=T, echo=TRUE}
 edge_attr(toyGraphWithDistances, "distance")
 ```
 
 rSDI's main function is `SDI()`. `SDI()` function works in a similar fashion and adds its output as graph and vertex attribute (in addition to computing and adding edge distance attributes if they are missing, which is a prerequisite for all SDI metrics):
 
-```{r eval=FALSE, echo=TRUE}
+```{r SDI.with.defaults, eval=T, echo=TRUE}
 toyGraphWithSDI <- SDI(toyGraph) #same as SDI(toyGraph, level="vertex", directionality="undirected", weight.use="weighted")
 edge_attr_names(toyGraphWithSDI)
 vertex_attr_names(toyGraphWithSDI)
@@ -169,41 +169,38 @@ vertex_attr_names(toyGraphWithSDI)
 
 To help its user follow the theoretical distinctions explained in the previous section, rSDI letter codes the index measurements it measures şn accordance with that classification. The above call computes (1) **v**ertex level, (2) **u**ndirected,, and (3) **w**eighted SDI index, which is the default. Thus to each vertex of its input graph it adds and attribute named 'SDI_vuw'. The attribute is added to each vertex even if the index cannot be computed. This is the case for vertex D which has an NA value stored in its 'SDI_vuw' attribute:
 
-```{r eval=FALSE, echo=TRUE}
+```{r eval=T, echo=TRUE}
 vertex_attr(toyGraphWithSDI, "SDI_vuw")
 ```
 
 If the index is computed at the network level the vertices will not have additional attributes but the graph itself will, following the same convention:
 
-```{r eval=FALSE, echo=TRUE}
+```{r SDI.at.network.level, eval=T, echo=TRUE}
 toyGraphWithNetworkSDI <- SDI(toyGraph, level="network", directionality="undirected", weight.use="weighted")
-graph_attr_names(toyGraphWithSDI) 
-graph_attr(toyGraphWithSDI,"SDI_nuw")
-
-#graph_attr_names(toyGraphWithNetworkSDI)
-#graph_attr(toyGraphWithNetworkSDI,"SDI_nuw")
+graph_attr_names(toyGraphWithNetworkSDI) 
+graph_attr(toyGraphWithNetworkSDI,"SDI_nuw")
 ```
 
 Once you are comfortable with this convention you can shorten your calls to `SDI()` using the 'variant' parameter as follows:
 
-```{r eval=FALSE, echo=TRUE}
+```{r eval=T, echo=TRUE}
 toyGraphWithNetworkSDI <- SDI(toyGraph, variant="nuw")
 ```
 
 SDI will leave previously computed indices untouched. Thus, for example, you can compute several indices in a pipe:
 
-```{r eval=FALSE, echo=TRUE}
+```{r multi.metric.example, eval=T, echo=TRUE}
 toyGraph %>% 
   SDI(variant="nuw") %>%
   SDI(variant="niu") %>% # nuu?
   SDI(variant="vuw") %>%
   SDI(variant="vuu") -> toyGraphWithSeveralSDI
+graph_attr_names(toyGraphWithSeveralSDI)
 ```
 
 Note that for the generalized SDI variant you must provide the additional $\alpha$ parameter:
-```{r eval=FALSE, echo=TRUE}
-SDI(toyGraph, variant="vug", alpha=0.5)
-# SDIwithAlpha(toyGraph, varaint = 'vug', alpha = 0.5)
+```{r generalized.SDI.example, eval=FALSE, echo=TRUE}
+toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5)
 ```
 
 # Example: Computing and plotting SDI for a geospatial network
