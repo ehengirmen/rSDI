@@ -200,8 +200,7 @@ graph_attr_names(toyGraphWithSeveralSDI)
 
 Note that for the generalized SDI variant you must provide the additional $\alpha$ parameter:
 ```{r generalized.SDI.example, eval=T, echo=TRUE}
-#toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5) #olması gereken bu
-toyGraphWithGeneralizedSDI <- SDIwithAlpha(toyGraph, variant="vug", alpha=0.5)
+toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5) 
 vertex_attr_names(toyGraphWithGeneralizedSDI) 
 vertex_attr(toyGraphWithGeneralizedSDI,"SDI_vug")
 ```

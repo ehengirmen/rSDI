@@ -5,18 +5,18 @@
 #' between two points in a two-dimensional space. This function takes the coordinates of two points (longitude and latitude)
 #' and calculates the straight distance between them, assuming flat Earth approximation.
 #'
-#' @param lon1 Longitude of the first point in decimal degrees.
-#' @param lat1 Latitude of the first point in decimal degrees.
-#' @param lon2 Longitude of the second point in decimal degrees.
-#' @param lat2 Latitude of the second point in decimal degrees.
+#' @param x1 X-coordinate of the first point.
+#' @param y1 Y-coordinate of the first point.
+#' @param x2 X-coordinate of the second point.
+#' @param y2 Y-coordinate of the second point.
 #'
 #' @return The Euclidean distance between the two points.
 #'
 #' @examples
-#' euclidean(-73.9851, 40.7580, -0.1278, 51.5074)
-#' # Euclidean distance between New York City and London.
+#' euclidean(1, 2, 4, 6)
+#' # Euclidean distance between points (1, 2) and (4, 6).
 #'
 #' @export
-euclidean <- function(lon1, lat1, lon2, lat2) {
-sqrt((lon2 - lon1)^2 + (lat2 - lat1)^2)
+euclidean <- function(x1, y1, x2, y2) {
+  sqrt((x2 - x1)^2 + (y2 - y1)^2)
 }

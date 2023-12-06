@@ -39,10 +39,6 @@
 #' dist_calc(g, formula = 'Haversine') # calculated hav when asked specificallly
 #' dist_calc(g, formula = 'Euclidean') # error
 #'
-# dist_cal cın SDI fonksiyonuna entegrasyonu  distance.calculation ile yapılıyor
-#' SDI_MODIFIED(g, distance.calculation ='Haversine') # calculates haversine dist, and then SDI
-#' SDI_MODIFIED(g, distance.calculation = 'Euclidean') # error => requires x&y vertices
-#'
 #' @export
 dist_calc <- function(g, formula = 'NULL') {
 
