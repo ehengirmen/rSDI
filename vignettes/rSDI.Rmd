@@ -199,22 +199,25 @@ graph_attr_names(toyGraphWithSeveralSDI)
 ```
 
 Note that for the generalized SDI variant you must provide the additional $\alpha$ parameter:
-```{r generalized.SDI.example, eval=FALSE, echo=TRUE}
-toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5)
+```{r generalized.SDI.example, eval=T, echo=TRUE}
+#toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5) #olması gereken bu
+toyGraphWithGeneralizedSDI <- SDIwithAlpha(toyGraph, variant="vug", alpha=0.5)
+vertex_attr_names(toyGraphWithGeneralizedSDI) 
+vertex_attr(toyGraphWithGeneralizedSDI,"SDI_vug")
 ```
 
 # Example: Computing and plotting SDI for a geospatial network
 
 rSDI package comes with a real world data set consisting of two data frames: `TurkiyeMigration.flows` contains the data on migration of people between Türkiye's provinces in the period 2016-2017-2018, a consolidated version of raw data from Turkish Statistical Institute. `TurkiyeMigration.nodes` contains labels and geographic coordinates (latitute&longitude) of provinces:
 
-```{r eval=FALSE, echo=TRUE}
+```{r eval=T, echo=TRUE}
 head(TurkiyeMigration.flows)
 head(TurkiyeMigration.nodes)
 ```
 
 You may call the `SDI()` function either with an igraph object you compose yourself from flow and node data, or directly giving them to SDI, as follows:
 
-```{r echo=T, eval=F}
+```{r echo=T, eval=T}
 TMSDI <- SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
 #   -- OR --
 TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
