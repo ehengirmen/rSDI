@@ -237,6 +237,14 @@ plot.SDI(TMSDI, variant="vuw", circle.size.scale=1.5)
 
 Please refer to documentation of `plotSDI()` fur further fine grained control of its plotting parameters.
 
+You may want to visualize the network flows along with the SDI index measurements. This particular combination is provided as a convenience. You can turn on the displaying of network edges using the 'edges' argument to SDO plotter:
+
+```{r echo=T, eval=F}
+plot.SDI(TMSDI, variant="vuw", edges=TRUE)
+```
+
+Please note that this combination is based on several graph visualization and geospatial packages. If you need a fine control over all these underlying visualization layers you are recommended to go for a home made solution using packages such as ggraph, sf, and naturalearth.
+
 ## Visualizing multiple indices
 
 Often one needs to visualize multiple SDI index calculations for comparison. In the TurkiyeMigration data set, for example, it is interesting to compare geographic dispersion of incoming and outgoing migration. In such a case first prepare the indices and then include them in plots:
