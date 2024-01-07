@@ -37,10 +37,13 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
     for (v in variant) {
       if (!endsWith(v, 'g')){
         parsedVariant <- variantParser(v)
+        if ((parsedVariant$weight.use == 'weighted') & (is.null(E(g)$weight))) {stop('To calculate a weighted index you need to provide "weights" attribute.')}
         g <- SDIcomputer(g, parsedVariant$level, parsedVariant$weight.use, parsedVariant$directionality,
                          if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality)} else {
                            # generalized variant
                            parsedVariant <- variantParser(v)
+                        if (is.null(E(g)$weight)){stop('To calculate a generalized index you need to provide "weights" attribute.')}
+                        if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
                            sdiWeighted <- SDIvalue(g, level = parsedVariant$level, mode = if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality,
                                                    weight.use = 'weighted')
 
@@ -59,6 +62,7 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
     }
   } else {
     # Use the provided level, weight.use, and directionality
+    if ((weight.use == 'weighted') & (is.null(E(g)$weight))){stop('To calculate a weighted index you need to provide "weights" attribute.')}
     mode <- if (directionality == 'undirected') 'all' else directionality
 
     if (!weight.use == 'generalized'){
