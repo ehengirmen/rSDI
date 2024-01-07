@@ -226,7 +226,21 @@ TMSDI <- SDI(TMgraph, variant="vuw")
 rSDI plotting functions make use of available open map packages in the R ecosystem to make a geographical plot of SDI measurements:
 
 ```{r echo=T, eval=F}
-plot.SDI(TMSDI, variant="vuw")
+require(rnaturalearth)
+plot.SDI <- function(g, variant=NULL, circle.size.scale=1) {
+  lay <- create_layout(g, 'manual', x=V(g)$longitude, y=V(g)$latitude)
+  world <- ne_countries(scale = "medium", returnclass = "sf")
+  z<-get.vertex.attribute(g,paste0("SDI_",variant))
+  #normal size is normalized to mean 10 (pt)
+  normalsize <- 10*z/mean(z,na.rm=TRUE)
+  p <- ggraph(lay) +
+    geom_sf(data=world) + 
+    coord_sf(xlim = c(min(V(g)$latitude), max(V(g)$latitude)), ylim = c(min(V(g)$longitude),max(V(g)$longitude))) +
+    geom_node_point(size = normalsize*circle.size.scale, aes(color="red"),alpha=0.4)+
+    geom_node_text(label=V(g)$label, size=2)
+  p
+}
+plot.SDI(TMSDI, variant="vuw", circle.size.scale=1)
 ```
 
 The `plotSDI()` function produces a visualization where the circles for each note has an area proportional to the node's selected SDI measure. The function will try to optimize the circle sizes as best as it can, but you can customize circle sizes, fill colors, etc. by overriding its parameters. For example you can scale the circles sizes relative to its default as:
