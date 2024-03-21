@@ -199,7 +199,8 @@ graph_attr_names(toyGraphWithSeveralSDI)
 ```
 
 Note that for the generalized SDI variant you must provide the additional $\alpha$ parameter:
-```{r generalized.SDI.example, eval=T, echo=TRUE}
+```{r generalized.SDI.example, eval=F, echo=TRUE}
+#TODO alpha not working
 toyGraphWithGeneralizedSDI <- SDI(toyGraph, variant="vug", alpha=0.5) 
 vertex_attr_names(toyGraphWithGeneralizedSDI) 
 vertex_attr(toyGraphWithGeneralizedSDI,"SDI_vug")
@@ -223,37 +224,17 @@ TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeM
 TMSDI <- SDI(TMgraph, variant="vuw")
 ```
 
-rSDI plotting functions make use of available open map packages in the R ecosystem to make a geographical plot of SDI measurements:
+rSDI plotting functions make use of available open map packages in the R ecosystem to make a geographical plot of SDI measurements. The `plotSDI()` function produces a visualization where the circles for each note has an area proportional to the node's selected SDI measure. The function will try to optimize the circle sizes as best as it can, but you can customize circle sizes, fill colors, etc. by overriding its parameters. For example you can scale the circles sizes relative to its default as:
 
-```{r echo=T, eval=F}
-require(rnaturalearth)
-plot.SDI <- function(g, variant=NULL, circle.size.scale=1) {
-  lay <- create_layout(g, 'manual', x=V(g)$longitude, y=V(g)$latitude)
-  world <- ne_countries(scale = "medium", returnclass = "sf")
-  z<-get.vertex.attribute(g,paste0("SDI_",variant))
-  #normal size is normalized to mean 10 (pt)
-  normalsize <- 10*z/mean(z,na.rm=TRUE)
-  p <- ggraph(lay) +
-    geom_sf(data=world) + 
-    coord_sf(xlim = c(min(V(g)$latitude), max(V(g)$latitude)), ylim = c(min(V(g)$longitude),max(V(g)$longitude))) +
-    geom_node_point(size = normalsize*circle.size.scale, aes(color="red"),alpha=0.4)+
-    geom_node_text(label=V(g)$label, size=2)
-  p
-}
+```{r echo=T, eval=T}
 plot.SDI(TMSDI, variant="vuw", circle.size.scale=1)
-```
-
-The `plotSDI()` function produces a visualization where the circles for each note has an area proportional to the node's selected SDI measure. The function will try to optimize the circle sizes as best as it can, but you can customize circle sizes, fill colors, etc. by overriding its parameters. For example you can scale the circles sizes relative to its default as:
-
-```{r echo=T, eval=F}
-plot.SDI(TMSDI, variant="vuw", circle.size.scale=1.5)
 ```
 
 Please refer to documentation of `plotSDI()` fur further fine grained control of its plotting parameters.
 
 You may want to visualize the network flows along with the SDI index measurements. This particular combination is provided as a convenience. You can turn on the displaying of network edges using the 'edges' argument to SDO plotter:
 
-```{r echo=T, eval=F}
+```{r echo=T, eval=T}
 plot.SDI(TMSDI, variant="vuw", edges=TRUE)
 ```
 

@@ -1,16 +1,26 @@
 Package: rSDI
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Compute Spatial Dispersion Index (SDI) family of metrics for spatial/geographic networks.
+Version: 0.2.0
+Authors@R: c(
+    person("Mehmet", "Gençer", email= "mehmetgencer@yahoo.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1717-8668")),
+    person("Mücahit", "Zor", email="mucahit.zor01@gmail.com", role = c("aut")),
+    person("Engin", "Hengirmen", email="ehengirmen@gmail.com", role = c("aut"))
+    )
+URL: https://github.com/ehengirmen/rSDI
+BugReports: https://github.com/ehengirmen/rSDI/issues
+Maintainer: Mehmet Gençer <mehmetgencer@yahoo.com>
+Description: Spatial Dispersion Index (SDI) is a generalized measurement index, 
+    or rather a family of indices to evaluate spatial dispersion of movements/flows in a network in a problem neutral way. 
+    rSDI computes and optionally visualizes this index with minimal hassle
+License:  `use_gpl3_license()`
 Encoding: UTF-8
 LazyData: true
 Depends: 
     R (>= 2.10)
+Imports:
+    igraph,
+    ggplot2
 RoxygenNote: 7.2.3.9000
 Suggests: 
     knitr,
