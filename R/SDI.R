@@ -6,7 +6,7 @@
 #' @param level The level to calculate the SDI. 'network' or 'vertex'
 #' @param weight.use 'weighted', 'unweighted', or 'generalized'
 #' @param directionality 'undirected', 'in', 'out', or 'all'
-#' @param variant Optional. Instead of specifying the level, weight, and directionality separately, the user can just supply the initial letters of each in that order to this argument.
+#' @param variant Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply the initial letters of each in that order to this argument.
 #' @param alpha Optional parameter used for generalized SDI calculations.
 #'
 #' @return An i graph object with SDI attributes added. The class of the object includes 'SDI'.
@@ -17,13 +17,14 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
   # check the type of inputs
   # if data frames => crete an igraph obj
   # flows are data frame if nodes are given, else an igraph
-  if (!is.null(nodes) && 'data.frame' %in% class(flows)){
-    g <- graph_from_data_frame(flows, directed = T, vertices = nodes)
-  } else if ('igraph' %in% class(flows)){
+  if ("igraph" %in% class(flows)){
     g <- flows
-  } else {
-    stop('Invalid input: please provide a data frame or an i graph object.')
+  } else if (!("data.frame" %in% class(flows) && "data.frame" %in% class(nodes))){
+    stop("flows and nodes should be data frames or flows should be an igraph object.")
+  } else if ("data.frame" %in% class(flows) && "data.frame" %in% class(nodes)){
+    g <- graph_from_data_frame(flows, directed = T, vertices = nodes)
   }
+
   # Distance calculation
   if (!is.null(distance.calculation)) {
     g <- dist_calc(g, formula = distance.calculation)
@@ -34,31 +35,35 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
   }
   # Check if a variant is provided
   if (!is.null(variant) && length(variant) > 0) {
+    if (!(is.character(variant))){stop('The variant argument must be a character or a vector of characters.')}
     for (v in variant) {
+      if (nchar(v) != 3){stop('The variant argument must be a string of exactly 3 characters.')}
       if (!endsWith(v, 'g')){
         parsedVariant <- variantParser(v)
         if ((parsedVariant$weight.use == 'weighted') & (is.null(E(g)$weight))) {stop('To calculate a weighted index you need to provide "weights" attribute.')}
-        g <- SDIcomputer(g, parsedVariant$level, parsedVariant$weight.use, parsedVariant$directionality,
-                         if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality)} else {
-                           # generalized variant
-                           parsedVariant <- variantParser(v)
-                        if (is.null(E(g)$weight)){stop('To calculate a generalized index you need to provide "weights" attribute.')}
-                        if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
-                           sdiWeighted <- SDIvalue(g, level = parsedVariant$level, mode = if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality,
-                                                   weight.use = 'weighted')
+        g <- SDIcomputer(g, parsedVariant$level, parsedVariant$weight.use,
+                         parsedVariant$directionality, parsedVariant$mode)
+        } else {
+                 # generalized variant
+                 parsedVariant <- variantParser(v)
+              if (is.null(E(g)$weight)){stop('To calculate a generalized index you need to provide "weights" attribute.')}
+                 if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
+                 if (alpha < 0 | alpha > 1){stop('Alpha must be between 0 and 1.')}
+                 sdiWeighted <- SDIvalue(g, level = parsedVariant$level, mode = parsedVariant$mode,
+                                         weight.use = 'weighted')
 
-                           sdiUnweighted <- SDIvalue(g, level = parsedVariant$level, mode =if (parsedVariant$directionality == 'undirected') 'all' else parsedVariant$directionality,
-                                                     weight.use = 'unweighted')
+                 sdiUnweighted <- SDIvalue(g, level = parsedVariant$level, mode = parsedVariant$mode,
+                                           weight.use = 'unweighted')
 
-                           calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
+                 calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
 
-                           if (parsedVariant$level == 'network'){
-                             g <- set_graph_attr(g, name = paste0('SDI_n', substr(parsedVariant$directionality,1,1),'g'),
-                                                 value = calculatedSDI)
-                           } else if (parsedVariant$level== 'vertex')
-                             g <- set_vertex_attr(g, name = paste0('SDI_v', substr(parsedVariant$directionality,1,1), 'g'),
-                                                  value = calculatedSDI)
-                         }
+                 if (parsedVariant$level == 'network'){
+                   g <- set_graph_attr(g, name = paste0('SDI_n', substr(parsedVariant$directionality,1,1),'g'),
+                                       value = calculatedSDI)
+                 } else if (parsedVariant$level== 'vertex')
+                   g <- set_vertex_attr(g, name = paste0('SDI_v', substr(parsedVariant$directionality,1,1), 'g'),
+                                        value = calculatedSDI)
+               }
     }
   } else {
     # Use the provided level, weight.use, and directionality
@@ -68,6 +73,7 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
     if (!weight.use == 'generalized'){
     g <- SDIcomputer(g, level, weight.use, directionality, mode)
     } else {
+      if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
       sdiWeighted <- SDIvalue(g, level = level, mode = mode, weight.use = 'weighted')
       sdiUnweighted <- SDIvalue(g, level = level, mode = mode, weight.use = 'unweighted')
       calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
@@ -132,18 +138,22 @@ variantParser <- function(variant){
   givenWeight <- substr(variant,3,3)
 
   if (!givenLevel %in% substr(levels,1,1)){
-    stop('Invalid first letter for the variant level: can be either "v"(vertex), or "n"(network).')}
-  else if(!givenDirection %in% substr(directions,1,1)){
-    stop('Invalid second letter for the variant direction: can be "u"(undirected), "i"(in), or "o"(out)')
+    stop('Invalid first letter for the variant "level": can be either "v"(vertex), or "n"(network).')
+    } else if(!givenDirection %in% substr(directions,1,1)){
+    stop('Invalid second letter for the variant "direction": can be "u"(undirected), "i"(in), or "o"(out)')
   } else if (!givenWeight %in% substr(weights,1,1)){
-    stop('Invalid third letter entry for the variant weight: can be either "w"(weighted),"u"(unweighted), or "g"(generalized)' )
+    stop('Invalid third letter entry for the variant "weight": can be either "w"(weighted),"u"(unweighted), or "g"(generalized)' )
   }
 
   level <- levels[startsWith(levels, givenLevel)]
   weight.use <- if (!givenWeight == 'g'){weights[startsWith(weights, givenWeight)]} else {NA}
   directionality <- directions[startsWith(directions, givenDirection)]
+  mode <- if (directionality == 'undirected') {'all'} else {directionality}
 
-  return(list(level = level, weight.use = weight.use, directionality = directionality))
+  return(list(
+    level = level, weight.use = weight.use,
+    directionality = directionality, mode = mode
+    ))
 }
 
 

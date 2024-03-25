@@ -4,10 +4,10 @@
 #' This function calculates distances between each pair of nodes in the graph.
 #' It supports both Haversine and Euclidean formula. The function automatically selects the formula based on the availabe vertex attributes: 'x' and 'y' for Euclidean distances, 'latitude' and 'longitude' for Haversine distances.
 #'
-#' @param g An igraph object, with nodes that have 'latitude' and 'longitude', or 'x' and 'y' attributes
-#' @param formula Optional parameter to specify the distance calculation formula to use, either 'Haversine', 'Euclidean'. By default `formula = 'NULL'` and if not specified the otherwise, the function automatically determines the formula based on the available vertex attributes. [x, y] => Euclidean, [latitude,longitude] => Haversine. Note that the `g` must have one of this set of vertex attributes.
+#' @param g An igraph object, with nodes that have a combination of 'latitude' and 'longitude', or 'x' and 'y' vertices attributes.
+#' @param formula Optional parameter to specify the distance calculation formula to use, either 'Haversine' or 'Euclidean'. By default `formula = NULL` and if not specified the otherwise, the function automatically determines the formula based on the available vertex attributes. [x, y] => Euclidean, [latitude,longitude] => Haversine. Note that the `g` must have one of this set of vertex attributes.
 #'
-#' @return A numeric vector with distances calculated between each pair of nodes in the graph. <NEEDS UPDATE>
+#' @return An igraph object with an additional edge attribute 'distance' that contains the calculated distances between each pair of nodes.
 #'
 #' @examples
 #' # Assuming 'g' is a graph object with latitude and longitude or x and y attributes for each node.
@@ -40,7 +40,7 @@
 #' dist_calc(g, formula = 'Euclidean') # error
 #'
 #' @export
-dist_calc <- function(g, formula = 'NULL') {
+dist_calc <- function(g, formula = NULL) {
 
   # get edges
   edges_g <- get.edgelist(g)
@@ -51,25 +51,42 @@ dist_calc <- function(g, formula = 'NULL') {
   vertexAttrsNew <- tolower(vertex_attr_names(g))
   names(vertex_attr(g)) <- vertexAttrsNew
 
-  if(formula == 'Euclidean'){
-    if(!('x' %in% vertexAttrsNew) & !('y' %in% vertexAttrsNew)){
-      stop('The igraph object must have x & y vertices for distances to be calculated.')
-    }
-  } else if (formula == 'Haversine'){
-    if(!('latitude' %in% vertexAttrsNew) & !('longitude' %in% vertexAttrsNew)){
-      stop('The igraph object must have latitude & longitude vertices for distances to be calculated.')
-    }
-  } else if(formula == 'NULL'){
-    if (('x' %in% vertexAttrsNew) & ('y' %in% vertexAttrsNew)){
+
+  if(is.null(formula) ){
+    if (('x' %in% vertexAttrsNew) && ('y' %in% vertexAttrsNew)){
       formula <- 'Euclidean'
-    } else if (('latitude' %in% vertexAttrsNew) & ('longitude' %in% vertexAttrsNew)){
+    } else if (('latitude' %in% vertexAttrsNew) && ('longitude' %in% vertexAttrsNew)){
       formula <- 'Haversine'
     } else {
-      stop("Requires x&y or lat.&long. values <UPDATE THIS MESSAGE>")
+      stop("The igraph object must have a combination of 'x' and 'y',
+           or 'latitude' and 'longitude' vertex attributes for distance to
+           be calculated.")
+    }
+  } else {
+    if(formula == 'Euclidean'){
+      if(!('x' %in% vertexAttrsNew) || !('y' %in% vertexAttrsNew)){
+        stop("The igraph object must have 'x' and 'y' vertices for distances to be calculated.")
+      }
+    } else if (formula == 'Haversine'){
+      if(!('latitude' %in% vertexAttrsNew) || !('longitude' %in% vertexAttrsNew)){
+        stop("The igraph object must have 'latitude' and 'longitude' vertices
+             for distances to be calculated.")
+      }
+    } else {
+      stop("The formula must be either 'Haversine' or 'Euclidean'.")
     }
   }
 
-
+  # check types of vertices
+  if (formula == 'Euclidean'){
+    if (!is.numeric(V(g)$x) || !is.numeric(V(g)$y)){
+      stop("The 'x' and 'y' vertices must be numeric.")
+    }
+  } else if (formula == 'Haversine'){
+    if (!is.numeric(V(g)$latitude) || !is.numeric(V(g)$longitude)){
+      stop("The 'latitude' and 'longitude' vertices must be numeric.")
+    }
+  }
 
   # initiate dist values
   distH <- vector(length = nrow(edges_g), mode = 'numeric')
@@ -80,11 +97,11 @@ dist_calc <- function(g, formula = 'NULL') {
   if (formula == 'Euclidean'){
     distV <- V(g)$x
     distH <- V(g)$y
-    # this is needed to accuratly calc dists
+    # this is needed to accurately calculate distances
     names(distH) <- V(g)$name
     names(distV) <- V(g)$name
 
-    for (i in 1:(nrow(edges_g))) {
+    for (i in seq_len(nrow(edges_g))) {
       node1 <- edges_g[i, 1]
       node2 <- edges_g[i, 2]
       distance[i] <- euclidean(
@@ -95,10 +112,10 @@ dist_calc <- function(g, formula = 'NULL') {
   } else if (formula == 'Haversine'){
     distV <- V(g)$longitude
     distH <- V(g)$latitude
-    # this is needed to accuratly calc dists
+    # this is needed to accurately calculate distances
     names(distH) <- V(g)$name
     names(distV) <- V(g)$name
-    for (i in 1:(nrow(edges_g))) {
+    for (i in seq_len(nrow(edges_g))) {
       node1 <- edges_g[i, 1]
       node2 <- edges_g[i, 2]
       distance[i] <- haversine(
@@ -111,3 +128,4 @@ dist_calc <- function(g, formula = 'NULL') {
   E(g)$distance <- distance
   return(g)
 }
+
