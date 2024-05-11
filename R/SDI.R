@@ -60,17 +60,17 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
         parsedVariant <- variantParser(v)
         if ((parsedVariant$weight.use == 'weighted') & (is.null(E(g)$weight))) {stop('To calculate a weighted index you need to provide "weights" attribute.')}
         g <- SDIcomputer(g, parsedVariant$level, parsedVariant$weight.use,
-                         parsedVariant$directionality, parsedVariant$mode)
+                         parsedVariant$directionality)
         } else {
                  # generalized variant
                  parsedVariant <- variantParser(v)
               if (is.null(E(g)$weight)){stop('To calculate a generalized index you need to provide "weights" attribute.')}
                  if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
                  if (alpha < 0 | alpha > 1){stop('Alpha must be between 0 and 1.')}
-                 sdiWeighted <- SDIvalue(g, level = parsedVariant$level, mode = parsedVariant$mode,
+                 sdiWeighted <- SDIvalue(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
                                          weight.use = 'weighted')
 
-                 sdiUnweighted <- SDIvalue(g, level = parsedVariant$level, mode = parsedVariant$mode,
+                 sdiUnweighted <- SDIvalue(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
                                            weight.use = 'unweighted')
 
                  calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
@@ -86,14 +86,13 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
   } else {
     # Use the provided level, weight.use, and directionality
     if ((weight.use == 'weighted') & (is.null(E(g)$weight))){stop('To calculate a weighted index you need to provide "weights" attribute.')}
-    mode <- if (directionality == 'undirected') 'all' else directionality
 
     if (!weight.use == 'generalized'){
-    g <- SDIcomputer(g, level, weight.use, directionality, mode)
+    g <- SDIcomputer(g, level, weight.use, directionality)
     } else {
       if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
-      sdiWeighted <- SDIvalue(g, level = level, mode = mode, weight.use = 'weighted')
-      sdiUnweighted <- SDIvalue(g, level = level, mode = mode, weight.use = 'unweighted')
+      sdiWeighted <- SDIvalue(g, level = level, directionality = directionality, weight.use = 'weighted')
+      sdiUnweighted <- SDIvalue(g, level = level, directionality = directionality , weight.use = 'unweighted')
       calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
 
       if (level == 'network'){
@@ -120,7 +119,6 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 #' @param level
 #' @param weight.use
 #' @param directionality
-#' @param mode
 #'
 #' @return
 #' @export
@@ -128,7 +126,7 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 #' @examples
 #' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
 #' SDIcomputer(TMgraph,"vertex","weighted","in")
-SDIcomputer <- function(g, level, weight.use, directionality, mode) {
+SDIcomputer <- function(g, level, weight.use, directionality) {
   if (level=="network") {
     if (weight.use=="weighted") {
       SDI_value <-  weightedNetworkSDI(g)
@@ -144,13 +142,13 @@ SDIcomputer <- function(g, level, weight.use, directionality, mode) {
   } else if (level=="vertex") {
     if (weight.use=="weighted") {
       SDIname <-paste0('SDI_','v',substr(directionality,1,1),'w')
-      SDI_value <- weightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- weightedAllVerticesSDI(g, mode = if (directionality == 'undirected') {'all'} else {directionality})
       g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
     else if (weight.use=="unweighted") {
       SDIname <- paste0('SDI_','v',substr(directionality,1,1),'u')
-      SDI_value <- unweightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- unweightedAllVerticesSDI(g, mode=if (directionality == 'undirected') {'all'} else {directionality})
       g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
@@ -191,11 +189,10 @@ variantParser <- function(variant){
   level <- levels[startsWith(levels, givenLevel)]
   weight.use <- if (!givenWeight == 'g'){weights[startsWith(weights, givenWeight)]} else {NA}
   directionality <- directions[startsWith(directions, givenDirection)]
-  mode <- if (directionality == 'undirected') {'all'} else {directionality}
 
   return(list(
     level = level, weight.use = weight.use,
-    directionality = directionality, mode = mode
+    directionality = directionality
     ))
 }
 
@@ -208,7 +205,6 @@ variantParser <- function(variant){
 #' @param g
 #' @param level
 #' @param weight.use
-#' @param mode
 #'
 #' @return
 #' @export
@@ -216,7 +212,7 @@ variantParser <- function(variant){
 #' @examples
 #' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
 #' SDIvalue(TMgraph,"vertex","weighted","in")
-SDIvalue <- function(g, level, weight.use, mode) {
+SDIvalue <- function(g, level, weight.use, directionality) {
   if (level=="network") {
     if (weight.use=="weighted") {
       SDI_value <-  weightedNetworkSDI(g)
@@ -229,11 +225,11 @@ SDIvalue <- function(g, level, weight.use, mode) {
     else stop("Invalid 'weight.use' argument")
   } else if (level=="vertex") {
     if (weight.use=="weighted") {
-      SDI_value <- weightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- weightedAllVerticesSDI(g, mode= if (directionality == 'undirected') {'all'} else {directionality})
       return(SDI_value)
     }
     else if (weight.use=="unweighted") {
-      SDI_value <- unweightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- unweightedAllVerticesSDI(g, mode=if (directionality == 'undirected') {'all'} else {directionality})
       return(SDI_value)
     }
     else stop("Invalid 'weight.use' argument")
