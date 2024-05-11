@@ -1,4 +1,18 @@
-#' SDI
+#' Computes graph or vertex level Spatial Dispersion Index(ces).
+#'
+#' If 'flows' is an igraph object then one can avoid supplying the nodes parameter.
+#' Alternatively one can supply flows as a data frame and nodes as another.
+#'
+#' To have an SDI computed you can must provide level, weight.use, and directionality parameters.
+#' Alternatively the 'variant' parameter can be specified which allows short-codes to indicate all of these three parameters.
+#' For example a value of "vui" for variant means a **v**ertex level, **u**ndirected, and **i**nward directed SDI calculation.
+#' See the description of these three parameters to figure out possible short codes in a similar fashion.
+#'
+#' The function returns an igraph object. If a network level calculation is requested the object will have an
+#' 'SDI_...' attribute whose name follows the short codes explained above. If a vertex level calculation is requested
+#' each vertex will have a similarly named attribute. For example the graph will have an 'SDI_nuw' attribute if variant is
+#' "nuw" (network level, undirected, and weighted). If variant is "vwu" each vertex will have an "SDI_vwu" attribute containing
+#' weighted undirected SDI for the vertex.
 #'
 #' @param flows A data frame or an igraph object
 #' @param nodes if flows are data frame, nodes must be supplied as a data frame. If flows are igraph object then not required
@@ -9,17 +23,21 @@
 #' @param variant Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply the initial letters of each in that order to this argument.
 #' @param alpha Optional parameter used for generalized SDI calculations.
 #'
-#' @return An i graph object with SDI attributes added. The class of the object includes 'SDI'.
+#' @return An igraph object with SDI attributes added. The class of the object includes 'SDI'.
 #' @export
+#' @examples
+#' SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
 SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "vertex",
                           weight.use = "weighted", directionality = "undirected",
                           variant = NULL, alpha = NULL) {
+  library(igraph)
   # check the type of inputs
   # if data frames => crete an igraph obj
   # flows are data frame if nodes are given, else an igraph
   if ("igraph" %in% class(flows)){
     g <- flows
-  } else if (!("data.frame" %in% class(flows) && "data.frame" %in% class(nodes))){
+    if (gorder(g)==0) {stop("Call on an empty graph")}
+  } else if (!("data.frame" %in% class(flows) && "data.frame" %in% class(nodes))){ #TODO: This should be 'or'
     stop("flows and nodes should be data frames or flows should be an igraph object.")
   } else if ("data.frame" %in% class(flows) && "data.frame" %in% class(nodes)){
     g <- graph_from_data_frame(flows, directed = T, vertices = nodes)
@@ -95,6 +113,21 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 ## Functions used
 # SDIhelpers are set of functions that simplfy the SDI.R file
 
+#' SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
+#' Not intended for explicit use. Called automatically by the `SDI()` function.
+#'
+#' @param g
+#' @param level
+#' @param weight.use
+#' @param directionality
+#' @param mode
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
+#' SDIcomputer(TMgraph,"vertex","weighted","in")
 SDIcomputer <- function(g, level, weight.use, directionality, mode) {
   if (level=="network") {
     if (weight.use=="weighted") {
@@ -128,6 +161,16 @@ SDIcomputer <- function(g, level, weight.use, directionality, mode) {
 }
 
 
+#' variantParser for SDI variant short-codes.
+#' This is a helper function and not intended for explicit use.
+#'
+#' @param variant a three letter short code for level, weight, and direction of SDI calculation.
+#'
+#' @return A list of explicit level, weight.use and directionality parameters
+#' @export
+#'
+#' @examples
+#' variantParser("vuw")
 variantParser <- function(variant){
   levels <- c('network', 'vertex')
   weights <- c('weighted', 'unweighted', 'generalized')
@@ -158,6 +201,21 @@ variantParser <- function(variant){
 
 
 
+#' SDIvalue() is a helper function to compute given SDI variant for the given graph object.
+#' Not intended for explicit use. Called automatically by the `SDI()` function.
+
+#'
+#' @param g
+#' @param level
+#' @param weight.use
+#' @param mode
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
+#' SDIvalue(TMgraph,"vertex","weighted","in")
 SDIvalue <- function(g, level, weight.use, mode) {
   if (level=="network") {
     if (weight.use=="weighted") {
