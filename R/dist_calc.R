@@ -58,9 +58,11 @@ dist_calc <- function(g, formula = NULL) {
     } else if (('latitude' %in% vertexAttrsNew) && ('longitude' %in% vertexAttrsNew)){
       formula <- 'Haversine'
     } else {
-      stop("The igraph object must have a combination of 'x' and 'y',
+      print("Vertex attribute names:")
+      print(vertexAttrsNew)
+      stop(paste("The igraph object must have a combination of 'x' and 'y',
            or 'latitude' and 'longitude' vertex attributes for distance to
-           be calculated.")
+           be calculated. Available attribute names are:",vertexAttrsNew))
     }
   } else {
     if(formula == 'Euclidean'){
@@ -129,3 +131,60 @@ dist_calc <- function(g, formula = NULL) {
   return(g)
 }
 
+#' Calculate Euclidean Distance Between Two Points
+#'
+#' @description
+#' This function calculates the Euclidean distance between two points. The Euclidean is the 'straight line' distance
+#' between two points in a two-dimensional space. This function takes the coordinates of two points (longitude and latitude)
+#' and calculates the straight distance between them, assuming flat Earth approximation.
+#'
+#' @param x1 X-coordinate of the first point.
+#' @param y1 Y-coordinate of the first point.
+#' @param x2 X-coordinate of the second point.
+#' @param y2 Y-coordinate of the second point.
+#'
+#' @return The Euclidean distance between the two points.
+#'
+#' @examples
+#' euclidean(1, 2, 4, 6)
+#' # Euclidean distance between points (1, 2) and (4, 6).
+#'
+#' @export
+euclidean <- function(x1, y1, x2, y2) {
+  sqrt((x2 - x1)^2 + (y2 - y1)^2)
+}
+
+#' Calculate Haversine Distance Between Two Points on Earth
+#'
+#' @description
+#' This function calculates the great-circle distance between two points on the Earth's surface,
+#' given their longitude and latitude in decimal degrees.
+#' It uses the Haversine formula, which accounts for the Earth's curvature.
+#'
+#' @param lon1 Longitude of the first point in decimal degrees.
+#' @param lat1 Latitude of the first point in decimal degrees.
+#' @param lon2 Longitude of the second point in decimal degrees.
+#' @param lat2 Latitude of the second point in decimal degrees.
+#' @param R The radius of the Earth in kilometers.
+#'
+#' @return The distance between the two points in kilometers.
+
+#' @examples
+#' haversine(-73.9851, 40.7580, -0.1278, 51.5074)
+#' # Distance between NY City and London.
+#'
+#' @export
+haversine <- function(lon1,lat1,lon2,lat2, R = 6371){
+  # degrees to radians
+  lon1 <- lon1 * pi/180
+  lat1 <- lat1 * pi/180
+  lon2 <- lon2 * pi/180
+  lat2 <- lat2 * pi/180
+
+  # H formula
+  dlon <- lon2 - lon1
+  dlat <- lat2 - lat1
+  a <- sin(dlat /2)^2 + cos(lat1) * cos(lat2) * sin(dlon/2)^2
+  H <- 2 * R * asin(sqrt(a))
+  H
+}

@@ -1,3 +1,16 @@
+#' plot.SDI generates a plot of the network and SDI metrics on a geographic map.
+#'
+#' @param g The igraph object to be plotted, whose vertices have attributes corresponding to SDI metrices.
+#' @param variant The SDI variant with a prefix, such as "SDI_vuw", etc.
+#' @param circle.size.scale Increase of decrease the size of circles drawn on nodes to represent SDI metric
+#' @param circle.color Change color of circles
+#' @param edges Whether to draw edges or not
+#' @param edge.width.range If edges are to be drawn give a custom range of edge widths
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plot.SDI <- function(g, variant="", circle.size.scale=1, circle.color="red", edges=FALSE, edge.width.range=c(0.01, 0.5)) {
   library(ggraph)
   world_map <- map_data("world")
@@ -19,5 +32,6 @@ plot.SDI <- function(g, variant="", circle.size.scale=1, circle.color="red", edg
   p+
     geom_node_point(size = normalsize*circle.size.scale, aes(color=circle.color),alpha=0.4)+
     theme(legend.position = "none")
+  #p+coord_fixed()
 }
 

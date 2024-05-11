@@ -12,7 +12,7 @@
 #' 'SDI_...' attribute whose name follows the short codes explained above. If a vertex level calculation is requested
 #' each vertex will have a similarly named attribute. For example the graph will have an 'SDI_nuw' attribute if variant is
 #' "nuw" (network level, undirected, and weighted). If variant is "vwu" each vertex will have an "SDI_vwu" attribute containing
-#' weighted undirected SDI for the vertex.
+#' weighted undirected SDI for the vertex. If variant is a vector each value indicates a separate variant to be computed.
 #'
 #' @param flows A data frame or an igraph object
 #' @param nodes if flows are data frame, nodes must be supplied as a data frame. If flows are igraph object then not required
@@ -20,7 +20,7 @@
 #' @param level The level to calculate the SDI. 'network' or 'vertex'
 #' @param weight.use 'weighted', 'unweighted', or 'generalized'
 #' @param directionality 'undirected', 'in', 'out', or 'all'
-#' @param variant Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply the initial letters of each in that order to this argument.
+#' @param variant Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply a short-code of initial letters of each in that order to this argument, e.g. "vuw" for vertex level, undirected and weighted SDI. If it is a vector each value is treated separetely and multiple indices are computed.
 #' @param alpha Optional parameter used for generalized SDI calculations.
 #'
 #' @return An igraph object with SDI attributes added. The class of the object includes 'SDI'.
