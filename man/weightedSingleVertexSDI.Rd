@@ -7,7 +7,14 @@
 weightedSingleVertexSDI(g, v, mode = all)
 }
 \arguments{
-\item{mode}{}
+\item{g}{the graph}
+
+\item{v}{the vertex}
+
+\item{mode}{directionality 'undirected', 'in', 'out', or 'all'}
+}
+\value{
+a numerical SDI value
 }
 \description{
 Not for explicit use.

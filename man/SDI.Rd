@@ -28,7 +28,7 @@ SDI(
 
 \item{directionality}{'undirected', 'in', 'out', or 'all'}
 
-\item{variant}{Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply the initial letters of each in that order to this argument.}
+\item{variant}{Optional. Instead of specifying the level, directionality, and weight separately, the user can just supply a short-code of initial letters of each in that order to this argument, e.g. "vuw" for vertex level, undirected and weighted SDI. If it is a vector each value is treated separetely and multiple indices are computed.}
 
 \item{alpha}{Optional parameter used for generalized SDI calculations.}
 }
@@ -49,7 +49,7 @@ The function returns an igraph object. If a network level calculation is request
 'SDI_...' attribute whose name follows the short codes explained above. If a vertex level calculation is requested
 each vertex will have a similarly named attribute. For example the graph will have an 'SDI_nuw' attribute if variant is
 "nuw" (network level, undirected, and weighted). If variant is "vwu" each vertex will have an "SDI_vwu" attribute containing
-weighted undirected SDI for the vertex.
+weighted undirected SDI for the vertex. If variant is a vector each value indicates a separate variant to be computed.
 }
 \examples{
 SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")

@@ -11,45 +11,39 @@
 #'
 #' @examples
 #' # Assuming 'g' is a graph object with latitude and longitude or x and y attributes for each node.
-#' dist_calc(g)
-#' dist_calc(g, formula = 'Haversine')
-#' dist_calc(g, formula = 'Euclidean')
 #' # an overall example
 #' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
 #'
 #' # user provides x and y vertices
 #' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
 #'
-#' g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' g<-igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 #'
 #'
 #' dist_calc(g) # eucl. dist. calculated
 #' dist_calc(g, formula = 'Euclidean') # calculates euc when asked
-#' dist_calc(g, formula = 'Haversine') # error
-#'
-#' SDI_MODIFIED(g, distance.calculation = 'Euclidean')  # calculates eucl. dist, and then SDI
-#' SDI_MODIFIED(g, distance.calculation ='Haversine') # error => latitude & longitude vertices
+#' #dist_calc(g, formula = 'Haversine') # error
 #'
 #' # user provides latitude and longitude vertices instead of x&y
 #' nodes<-data.frame(id=c("A","B","C","D"),latitude=c(0,4,0,4),longitude=c(3,0,0,3))
 #'
-#' g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' g<-igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 #'
 #' dist_calc(g) # haversine dist calculated
 #' dist_calc(g, formula = 'Haversine') # calculated hav when asked specificallly
-#' dist_calc(g, formula = 'Euclidean') # error
+#' #dist_calc(g, formula = 'Euclidean') # error
 #'
 #' @export
 dist_calc <- function(g, formula = NULL) {
-
+  if (!requireNamespace("igraph", quietly = TRUE)) {stop("igraph is required")}
   # get edges
-  edges_g <- get.edgelist(g)
+  edges_g <- igraph::get.edgelist(g) #TODO: deprecated
   # columns may include lower-Capital case letters
   # lower them, change them in g to lowercase
   # then revert this change before returning g
-  vertexAttrsOld <-vertex_attr_names(g)
-  vertexAttrsNew <- tolower(vertex_attr_names(g))
-  names(vertex_attr(g)) <- vertexAttrsNew
+  vertexAttrsOld <-igraph::vertex_attr_names(g)
+  vertexAttrsNew <- tolower(igraph::vertex_attr_names(g))
+  names(igraph::vertex_attr(g)) <- vertexAttrsNew
 
 
   if(is.null(formula) ){
@@ -81,11 +75,11 @@ dist_calc <- function(g, formula = NULL) {
 
   # check types of vertices
   if (formula == 'Euclidean'){
-    if (!is.numeric(V(g)$x) || !is.numeric(V(g)$y)){
+    if (!is.numeric(igraph::V(g)$x) || !is.numeric(igraph::V(g)$y)){
       stop("The 'x' and 'y' vertices must be numeric.")
     }
   } else if (formula == 'Haversine'){
-    if (!is.numeric(V(g)$latitude) || !is.numeric(V(g)$longitude)){
+    if (!is.numeric(igraph::V(g)$latitude) || !is.numeric(igraph::V(g)$longitude)){
       stop("The 'latitude' and 'longitude' vertices must be numeric.")
     }
   }
@@ -97,11 +91,11 @@ dist_calc <- function(g, formula = NULL) {
 
   # check formula
   if (formula == 'Euclidean'){
-    distV <- V(g)$x
-    distH <- V(g)$y
+    distV <- igraph::V(g)$x
+    distH <- igraph::V(g)$y
     # this is needed to accurately calculate distances
-    names(distH) <- V(g)$name
-    names(distV) <- V(g)$name
+    names(distH) <- igraph::V(g)$name
+    names(distV) <- igraph::V(g)$name
 
     for (i in seq_len(nrow(edges_g))) {
       node1 <- edges_g[i, 1]
@@ -112,11 +106,11 @@ dist_calc <- function(g, formula = NULL) {
       )
     }
   } else if (formula == 'Haversine'){
-    distV <- V(g)$longitude
-    distH <- V(g)$latitude
+    distV <- igraph::V(g)$longitude
+    distH <- igraph::V(g)$latitude
     # this is needed to accurately calculate distances
-    names(distH) <- V(g)$name
-    names(distV) <- V(g)$name
+    names(distH) <- igraph::V(g)$name
+    names(distV) <- igraph::V(g)$name
     for (i in seq_len(nrow(edges_g))) {
       node1 <- edges_g[i, 1]
       node2 <- edges_g[i, 2]
@@ -126,8 +120,8 @@ dist_calc <- function(g, formula = NULL) {
       )
     }
   }
-  names(vertex_attr(g)) <- vertexAttrsOld
-  E(g)$distance <- distance
+  names(igraph::vertex_attr(g)) <- vertexAttrsOld
+  igraph::E(g)$distance <- distance
   return(g)
 }
 

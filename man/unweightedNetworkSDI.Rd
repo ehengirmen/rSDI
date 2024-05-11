@@ -7,7 +7,10 @@
 unweightedNetworkSDI(g)
 }
 \arguments{
-\item{g}{}
+\item{g}{the graph}
+}
+\value{
+a numerical SDI value
 }
 \description{
 Not for explicit use.

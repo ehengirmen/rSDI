@@ -24,8 +24,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(rSDI)
-devtools::load_all()
+library(rSDI)
+#devtools::load_all()
 ```
 
 # Spatial Dispersion Index (SDI) for Analysis of Activity Outreach in Spatial and Geographic Networks
@@ -35,6 +35,7 @@ Consider a network of movements or exchanges between places. This is commonplace
 In social and economic sciences analysis of relations in such a network is very interesting, and with the recent availability and coverage of spatial network data, very useful for managerial planning in private firms and policy decisions such as urban planning in public agencies. On the other hand metrics concerning spatial aspects of networks are almost always problem specific and not general. Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial distances of movements in a network in a problem neutral way, thus aims to address this problem. rSDI computes and optionally visualizes this index with minimal hassle:
 
 ```{r echo=TRUE, eval=FALSE}
+library(rSDI)
 SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vow") %>% plot.SDI(variant="vow")
 ```
 
@@ -234,6 +235,7 @@ You may call the `SDI()` function either with an igraph object you compose yours
 ```{r echo=T, eval=T}
 TMSDI <- SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
 #   -- OR --
+library(igraph)
 TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
 TMSDI <- SDI(TMgraph, variant="vuw")
 ```

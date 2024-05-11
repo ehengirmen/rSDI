@@ -8,13 +8,25 @@ Not intended for explicit use. Called automatically by the `SDI()` function.}
 SDIcomputer(g, level, weight.use, directionality, mode)
 }
 \arguments{
-\item{mode}{}
+\item{g}{the graph}
+
+\item{level}{The level to calculate the SDI. 'network' or 'vertex'}
+
+\item{weight.use}{'weighted', 'unweighted', or 'generalized'}
+
+\item{directionality}{'undirected', 'in', 'out', or 'all'}
+
+\item{mode}{unused}
+}
+\value{
+an igraph object
 }
 \description{
 SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
 Not intended for explicit use. Called automatically by the `SDI()` function.
 }
 \examples{
-TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
-SDIcomputer(TMgraph,"vertex","weighted","in")
+TMgraph <- igraph::graph_from_data_frame(TurkiyeMigration.flows,
+              directed=TRUE, TurkiyeMigration.nodes)
+SDIcomputer(TMgraph,"vertex","weighted","in","all")
 }

@@ -26,6 +26,13 @@
 
 \item{edge.width.range}{If edges are to be drawn give a custom range of edge widths}
 }
+\value{
+returns a ggplot2 plot
+}
 \description{
 plot.SDI generates a plot of the network and SDI metrics on a geographic map.
+}
+\examples{
+TMSDI <- SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
+plot.SDI(TMSDI, variant="vuw", circle.size.scale=1)
 }

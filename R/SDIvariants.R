@@ -1,42 +1,42 @@
 #' Not for explicit use.
 #'
-#' @param g
-#' @param mode
+#' @param g the graph
+#' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return
+#' @return a vector of values
 #' @export
 #'
-#' @examples
+#' #@examples
 unweightedAllVerticesSDI <- function (g, mode="all") {
   sdi <- function(v) {unweightedSingleVertexSDI(g,v,mode=mode)}
-  unlist(  lapply(V(g), sdi  )  )
+  unlist(  lapply(igraph::V(g), sdi  )  )
 }
 
 #' Not for explicit use.
 #'
-#' @param g
+#' @param g the graph
 #'
-#' @return
+#' @return a numerical SDI value
 #' @export
 #'
-#' @examples
+#' #@examples
 unweightedNetworkSDI <- function(g) {
-  edges <- E(g)
+  edges <- igraph::E(g)
   sum(edges$distance)/length(edges)
 }
 
 #' Not for explicit use.
 #'
-#' @param g
-#' @param v
-#' @param mode
+#' @param g the graph
+#' @param v the vertex
+#' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return
+#' @return a numerical SDI value
 #' @export
 #'
-#' @examples
+#' #@examples
 unweightedSingleVertexSDI <- function(g, v, mode=all) {
-  vedges<-incident(g,v,mode=mode)
+  vedges<-igraph::incident(g,v,mode=mode)
   if (length(vedges)>0) {
     sum(vedges$distance)/length(vedges)
   } else {
@@ -46,43 +46,43 @@ unweightedSingleVertexSDI <- function(g, v, mode=all) {
 
 #' Not for explicit use.
 #'
-#' @param g
-#' @param mode
+#' @param g the graph
+#' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return
+#' @return a vector of values
 #' @export
 #'
-#' @examples
+#' #@examples
 weightedAllVerticesSDI <- function (g, mode="all") {
   sdi <- function(v) {weightedSingleVertexSDI(g,v,mode=mode)}
-  unlist(  lapply(V(g), sdi  )  )
+  unlist(  lapply(igraph::V(g), sdi  )  )
 }
 
 #' Not for explicit use.
 #'
-#' @param g
+#' @param g the graph
 #'
-#' @return
+#' @return a numerical SDI value
 #' @export
 #'
-#' @examples
+#' #@examples
 weightedNetworkSDI <- function(g) {
-  edges <- E(g)
+  edges <- igraph::E(g)
   sum(edges$weight*edges$distance)/sum(edges$weight)
 }
 
 #' Not for explicit use.
 #'
-#' @param g
-#' @param v
-#' @param mode
+#' @param g the graph
+#' @param v the vertex
+#' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return
+#' @return a numerical SDI value
 #' @export
 #'
-#' @examples
+#' #@examples
 weightedSingleVertexSDI <- function(g, v, mode=all) {
-  vedges<-incident(g,v,mode=mode)
+  vedges<-igraph::incident(g,v,mode=mode)
   if (length(vedges)>0) {
     sum(vedges$weight*vedges$distance)/sum(vedges$weight)
   } else {

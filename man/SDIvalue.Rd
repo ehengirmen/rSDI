@@ -8,13 +8,23 @@ Not intended for explicit use. Called automatically by the `SDI()` function.}
 SDIvalue(g, level, weight.use, mode)
 }
 \arguments{
-\item{mode}{}
+\item{g}{the graph}
+
+\item{level}{The level to calculate the SDI. 'network' or 'vertex'}
+
+\item{weight.use}{'weighted', 'unweighted', or 'generalized'}
+
+\item{mode}{unused}
+}
+\value{
+a vector of values
 }
 \description{
 SDIvalue() is a helper function to compute given SDI variant for the given graph object.
 Not intended for explicit use. Called automatically by the `SDI()` function.
 }
 \examples{
-TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
+TMgraph <- igraph::graph_from_data_frame(TurkiyeMigration.flows,
+                        directed=TRUE, TurkiyeMigration.nodes)
 SDIvalue(TMgraph,"vertex","weighted","in")
 }

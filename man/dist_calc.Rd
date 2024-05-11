@@ -20,32 +20,26 @@ It supports both Haversine and Euclidean formula. The function automatically sel
 }
 \examples{
 # Assuming 'g' is a graph object with latitude and longitude or x and y attributes for each node.
-dist_calc(g)
-dist_calc(g, formula = 'Haversine')
-dist_calc(g, formula = 'Euclidean')
 # an overall example
 flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
 
 # user provides x and y vertices
 nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
 
-g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+g<-igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 
 
 dist_calc(g) # eucl. dist. calculated
 dist_calc(g, formula = 'Euclidean') # calculates euc when asked
-dist_calc(g, formula = 'Haversine') # error
-
-SDI_MODIFIED(g, distance.calculation = 'Euclidean')  # calculates eucl. dist, and then SDI
-SDI_MODIFIED(g, distance.calculation ='Haversine') # error => latitude & longitude vertices
+#dist_calc(g, formula = 'Haversine') # error
 
 # user provides latitude and longitude vertices instead of x&y
 nodes<-data.frame(id=c("A","B","C","D"),latitude=c(0,4,0,4),longitude=c(3,0,0,3))
 
-g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+g<-igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 
 dist_calc(g) # haversine dist calculated
 dist_calc(g, formula = 'Haversine') # calculated hav when asked specificallly
-dist_calc(g, formula = 'Euclidean') # error
+#dist_calc(g, formula = 'Euclidean') # error
 
 }

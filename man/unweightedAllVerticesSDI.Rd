@@ -7,7 +7,12 @@
 unweightedAllVerticesSDI(g, mode = "all")
 }
 \arguments{
-\item{mode}{}
+\item{g}{the graph}
+
+\item{mode}{directionality 'undirected', 'in', 'out', or 'all'}
+}
+\value{
+a vector of values
 }
 \description{
 Not for explicit use.
