@@ -5,21 +5,21 @@
 \title{SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
 Not intended for explicit use. Called automatically by the `SDI()` function.}
 \usage{
-SDIcomputer(g, level, weight.use, directionality, mode)
+SDIcomputer(g, level, weight.use, directionality, return.value = FALSE)
 }
 \arguments{
-\item{g}{the graph}
+\item{g}{An igraph object.}
 
-\item{level}{The level to calculate the SDI. 'network' or 'vertex'}
+\item{level}{The level to calculate the SDI. 'network' or 'vertex'.}
 
-\item{weight.use}{'weighted', 'unweighted', or 'generalized'}
+\item{weight.use}{'weighted' or 'unweighted'.}
 
-\item{directionality}{'undirected', 'in', 'out', or 'all'}
+\item{directionality}{'undirected', 'in', 'out', or 'all'.}
 
-\item{mode}{unused}
+\item{return.value}{Logical. If TRUE, return the computed SDI value instead of modifying the graph object.}
 }
 \value{
-an igraph object
+If return.value is TRUE, returns the computed SDI value. Otherwise, returns the modified graph object.
 }
 \description{
 SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
@@ -27,6 +27,6 @@ Not intended for explicit use. Called automatically by the `SDI()` function.
 }
 \examples{
 TMgraph <- igraph::graph_from_data_frame(TurkiyeMigration.flows,
-              directed=TRUE, TurkiyeMigration.nodes)
-SDIcomputer(TMgraph,"vertex","weighted","in","all")
+      directed=TRUE, TurkiyeMigration.nodes)
+SDIcomputer(TMgraph,"vertex","weighted","in")
 }

@@ -30,7 +30,7 @@
 SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "vertex",
                           weight.use = "weighted", directionality = "undirected",
                           variant = NULL, alpha = NULL) {
-  if (!requireNamespace("igraph", quietly = TRUE)) {stop("igraph is required")}
+  #library(igraph)
   # check the type of inputs
   # if data frames => crete an igraph obj
   # flows are data frame if nodes are given, else an igraph
@@ -86,7 +86,6 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
   } else {
     # Use the provided level, weight.use, and directionality
     if ((weight.use == 'weighted') & (is.null(igraph::E(g)$weight))){stop('To calculate a weighted index you need to provide "weights" attribute.')}
-    mode <- if (directionality == 'undirected') 'all' else directionality
 
     if (!weight.use == 'generalized'){
     g <- SDIcomputer(g, level, weight.use, directionality)
@@ -116,28 +115,31 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 #' SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
 #' Not intended for explicit use. Called automatically by the `SDI()` function.
 #'
-#' @param g the graph
-#' @param level The level to calculate the SDI. 'network' or 'vertex'
-#' @param weight.use 'weighted', 'unweighted', or 'generalized'
-#' @param directionality 'undirected', 'in', 'out', or 'all'
-#' @param mode unused
+#' @param g An igraph object.
+#' @param level The level to calculate the SDI. 'network' or 'vertex'.
+#' @param weight.use 'weighted' or 'unweighted'.
+#' @param directionality 'undirected', 'in', 'out', or 'all'.
+#' @param return.value Logical. If TRUE, return the computed SDI value instead of modifying the graph object.
 #'
-#' @return an igraph object
+#' @return If return.value is TRUE, returns the computed SDI value. Otherwise, returns the modified graph object.
 #' @export
 #'
 #' @examples
 #' TMgraph <- igraph::graph_from_data_frame(TurkiyeMigration.flows,
-#'               directed=TRUE, TurkiyeMigration.nodes)
-#' SDIcomputer(TMgraph,"vertex","weighted","in","all")
-SDIcomputer <- function(g, level, weight.use, directionality, mode) {
+#'       directed=TRUE, TurkiyeMigration.nodes)
+#' SDIcomputer(TMgraph,"vertex","weighted","in")
+SDIcomputer <- function(g, level, weight.use, directionality,
+                        return.value = FALSE) {
   if (level=="network") {
     if (weight.use=="weighted") {
       SDI_value <-  weightedNetworkSDI(g)
+      if (return.value){return(SDI_value)}
       g <- igraph::set_graph_attr(g, name = 'SDI_nuw', value = SDI_value)
       return(g)
     }
     else if (weight.use=="unweighted"){
       SDI_value <- unweightedNetworkSDI(g)
+      if (return.value){return(SDI_value)}
       g <- igraph::set_graph_attr(g, name = 'SDI_nuu', value = SDI_value)
       return(g)
     }
@@ -145,13 +147,15 @@ SDIcomputer <- function(g, level, weight.use, directionality, mode) {
   } else if (level=="vertex") {
     if (weight.use=="weighted") {
       SDIname <-paste0('SDI_','v',substr(directionality,1,1),'w')
-      SDI_value <- weightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- weightedAllVerticesSDI(g, mode = if (directionality == 'undirected') {'all'} else {directionality})
+      if (return.value){return(SDI_value)}
       g <- igraph::set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
     else if (weight.use=="unweighted") {
       SDIname <- paste0('SDI_','v',substr(directionality,1,1),'u')
-      SDI_value <- unweightedAllVerticesSDI(g, mode=mode)
+      SDI_value <- unweightedAllVerticesSDI(g, mode=if (directionality == 'undirected') {'all'} else {directionality})
+      if (return.value){return(SDI_value)}
       g <- igraph::set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
@@ -198,52 +202,3 @@ variantParser <- function(variant){
     directionality = directionality
     ))
 }
-
-
-
-#' SDIvalue() is a helper function to compute given SDI variant for the given graph object.
-#' Not intended for explicit use. Called automatically by the `SDI()` function.
-
-#'
-#' @param g the graph
-#' @param level The level to calculate the SDI. 'network' or 'vertex'
-#' @param weight.use 'weighted', 'unweighted', or 'generalized'
-#' @param mode unused
-#'
-#' @return a vector of values
-#' @export
-#'
-#' @examples
-#' TMgraph <- igraph::graph_from_data_frame(TurkiyeMigration.flows,
-#'                         directed=TRUE, TurkiyeMigration.nodes)
-#' SDIvalue(TMgraph,"vertex","weighted","in")
-SDIvalue <- function(g, level, weight.use, mode) {
-  if (level=="network") {
-    if (weight.use=="weighted") {
-      SDI_value <-  weightedNetworkSDI(g)
-      return(SDI_value)
-    }
-    else if (weight.use=="unweighted"){
-      SDI_value <- unweightedNetworkSDI(g)
-      return(SDI_value)
-    }
-    else stop("Invalid 'weight.use' argument")
-  } else if (level=="vertex") {
-    if (weight.use=="weighted") {
-      SDI_value <- weightedAllVerticesSDI(g, mode=mode)
-      return(SDI_value)
-    }
-    else if (weight.use=="unweighted") {
-      SDI_value <- unweightedAllVerticesSDI(g, mode=mode)
-      return(SDI_value)
-    }
-    else stop("Invalid 'weight.use' argument")
-  } else {
-    stop("Invalid 'level' argument")
-  }
-}
-
-
-
-
-
