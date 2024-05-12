@@ -3,7 +3,7 @@
 #' @param g the graph
 #' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return a vector of values
+#' @return a vector of vertex SDI values
 #' @export
 #'
 #' #@examples
@@ -49,7 +49,7 @@ unweightedSingleVertexSDI <- function(g, v, mode=all) {
 #' @param g the graph
 #' @param mode directionality 'undirected', 'in', 'out', or 'all'
 #'
-#' @return a vector of values
+#' @return a vector of vertex SDI values
 #' @export
 #'
 #' #@examples
