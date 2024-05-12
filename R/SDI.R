@@ -115,12 +115,13 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 #' SDIcomputer() is a helper function to compute given SDI variant for the given graph object.
 #' Not intended for explicit use. Called automatically by the `SDI()` function.
 #'
-#' @param g
-#' @param level
-#' @param weight.use
-#' @param directionality
+#' @param g An igraph object.
+#' @param level The level to calculate the SDI. 'network' or 'vertex'.
+#' @param weight.use 'weighted' or 'unweighted'.
+#' @param directionality 'undirected', 'in', 'out', or 'all'.
+#' @param return.value Logical. If TRUE, return the computed SDI value instead of modifying the graph object.
 #'
-#' @return
+#' @return If return.value is TRUE, returns the computed SDI value. Otherwise, returns the modified graph object.
 #' @export
 #'
 #' @examples
