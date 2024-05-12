@@ -67,11 +67,11 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
               if (is.null(E(g)$weight)){stop('To calculate a generalized index you need to provide "weights" attribute.')}
                  if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
                  if (alpha < 0 | alpha > 1){stop('Alpha must be between 0 and 1.')}
-                 sdiWeighted <- SDIvalue(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
-                                         weight.use = 'weighted')
+                 sdiWeighted <- SDIcomputer(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
+                                         weight.use = 'weighted', return.value = TRUE)
 
-                 sdiUnweighted <- SDIvalue(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
-                                           weight.use = 'unweighted')
+                 sdiUnweighted <- SDIcomputer(g, level = parsedVariant$level, directionality = parsedVariant$directionality,
+                                           weight.use = 'unweighted', return.value = TRUE)
 
                  calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
 
@@ -91,8 +91,8 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
     g <- SDIcomputer(g, level, weight.use, directionality)
     } else {
       if (is.null(alpha)){stop('To calculate a generalized index you need to provide a "alpha" in SDI().')}
-      sdiWeighted <- SDIvalue(g, level = level, directionality = directionality, weight.use = 'weighted')
-      sdiUnweighted <- SDIvalue(g, level = level, directionality = directionality , weight.use = 'unweighted')
+      sdiWeighted <- SDIcomputer(g, level = level, directionality = directionality, weight.use = 'weighted', return.value = TRUE)
+      sdiUnweighted <- SDIcomputer(g, level = level, directionality = directionality , weight.use = 'unweighted', return.value = TRUE)
       calculatedSDI <- sdiUnweighted^alpha + sdiWeighted^(1-alpha)
 
       if (level == 'network'){
@@ -126,15 +126,18 @@ SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "ver
 #' @examples
 #' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
 #' SDIcomputer(TMgraph,"vertex","weighted","in")
-SDIcomputer <- function(g, level, weight.use, directionality) {
+SDIcomputer <- function(g, level, weight.use, directionality,
+                        return.value = FALSE) {
   if (level=="network") {
     if (weight.use=="weighted") {
       SDI_value <-  weightedNetworkSDI(g)
+      if (return.value){return(SDI_value)}
       g <- set_graph_attr(g, name = 'SDI_nuw', value = SDI_value)
       return(g)
     }
     else if (weight.use=="unweighted"){
       SDI_value <- unweightedNetworkSDI(g)
+      if (return.value){return(SDI_value)}
       g <- set_graph_attr(g, name = 'SDI_nuu', value = SDI_value)
       return(g)
     }
@@ -143,12 +146,14 @@ SDIcomputer <- function(g, level, weight.use, directionality) {
     if (weight.use=="weighted") {
       SDIname <-paste0('SDI_','v',substr(directionality,1,1),'w')
       SDI_value <- weightedAllVerticesSDI(g, mode = if (directionality == 'undirected') {'all'} else {directionality})
+      if (return.value){return(SDI_value)}
       g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
     else if (weight.use=="unweighted") {
       SDIname <- paste0('SDI_','v',substr(directionality,1,1),'u')
       SDI_value <- unweightedAllVerticesSDI(g, mode=if (directionality == 'undirected') {'all'} else {directionality})
+      if (return.value){return(SDI_value)}
       g <- set_vertex_attr(g, name = SDIname, value = SDI_value )
       return(g)
     }
@@ -195,50 +200,3 @@ variantParser <- function(variant){
     directionality = directionality
     ))
 }
-
-
-
-#' SDIvalue() is a helper function to compute given SDI variant for the given graph object.
-#' Not intended for explicit use. Called automatically by the `SDI()` function.
-
-#'
-#' @param g
-#' @param level
-#' @param weight.use
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' TMgraph <- graph_from_data_frame(TurkiyeMigration.flows, directed=TRUE, TurkiyeMigration.nodes)
-#' SDIvalue(TMgraph,"vertex","weighted","in")
-SDIvalue <- function(g, level, weight.use, directionality) {
-  if (level=="network") {
-    if (weight.use=="weighted") {
-      SDI_value <-  weightedNetworkSDI(g)
-      return(SDI_value)
-    }
-    else if (weight.use=="unweighted"){
-      SDI_value <- unweightedNetworkSDI(g)
-      return(SDI_value)
-    }
-    else stop("Invalid 'weight.use' argument")
-  } else if (level=="vertex") {
-    if (weight.use=="weighted") {
-      SDI_value <- weightedAllVerticesSDI(g, mode= if (directionality == 'undirected') {'all'} else {directionality})
-      return(SDI_value)
-    }
-    else if (weight.use=="unweighted") {
-      SDI_value <- unweightedAllVerticesSDI(g, mode=if (directionality == 'undirected') {'all'} else {directionality})
-      return(SDI_value)
-    }
-    else stop("Invalid 'weight.use' argument")
-  } else {
-    stop("Invalid 'level' argument")
-  }
-}
-
-
-
-
-
