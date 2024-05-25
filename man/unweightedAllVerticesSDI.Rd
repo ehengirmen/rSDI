@@ -12,7 +12,7 @@ unweightedAllVerticesSDI(g, mode = "all")
 \item{mode}{directionality 'undirected', 'in', 'out', or 'all'}
 }
 \value{
-a vector of values
+a vector of vertex SDI values
 }
 \description{
 Not for explicit use.
