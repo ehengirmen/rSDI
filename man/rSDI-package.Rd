@@ -4,9 +4,9 @@
 \name{rSDI-package}
 \alias{rSDI}
 \alias{rSDI-package}
-\title{rSDI: Spatial Dispersion Index (SDI) family of metrics for spatial/geographic networks}
+\title{rSDI: Spatial Dispersion Index (SDI) Family of Metrics for Spatial/Geographic Networks}
 \description{
-Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial dispersion of movements/flows in a network in a problem neutral way. rSDI computes and optionally visualizes this index with minimal hassle.
+Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial dispersion of movements/flows in a network in a problem neutral way. This package computes and optionally visualizes this index with minimal hassle.
 }
 \seealso{
 Useful links:
@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Mehmet Gençer \email{mehmetgencer@yahoo.com} (\href{https://orcid.org/0000-0003-1717-8668}{ORCID})
+\strong{Maintainer}: Mehmet Gençer \email{mehmetgencer@yahoo.com} (\href{https://orcid.org/0000-0003-1717-8668}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{
