@@ -15,3 +15,9 @@ a numerical SDI value
 \description{
 Not for explicit use.
 }
+\examples{
+flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+toyGraphWithSDI <- unweightedNetworkSDI(toyGraph)
+}

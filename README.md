@@ -40,10 +40,10 @@ TMSDI <- SDI(TMgraph, variant="vuw")
 ```
 Refer to documentation for calculating different SDI variants
 
-If you want to use visualization features of rSDI package make sure you have installed ggraph and maps packages, then invoke plot.SDI as follows to visualize a particular SDI variant computed previously:
+If you want to use visualization features of rSDI package make sure you have installed ggraph and maps packages, then invoke plotSDI as follows to visualize a particular SDI variant computed previously:
 
 ```{r echo=T, eval=T}
-plot.SDI(TMSDI, variant="vuw")
+plotSDI(TMSDI, variant="vuw")
 ```
 
 Please refer to plot.SDI documentation for parameters to tweak visualization features.

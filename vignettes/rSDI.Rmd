@@ -36,7 +36,7 @@ In social and economic sciences analysis of relations in such a network is very 
 
 ```{r echo=TRUE, eval=FALSE}
 library(rSDI)
-SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vow") %>% plot.SDI(variant="vow")
+SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vow") %>% plotSDI(variant="vow")
 ```
 
 
@@ -143,7 +143,6 @@ rSDI functions consume an igraph object and return their output as an igraph whi
 ```{r echo=TRUE}
 flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
 nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
-flowsWithDistances<-flows
 library(igraph)
 toyGraph <- graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 ```
@@ -243,7 +242,7 @@ TMSDI <- SDI(TMgraph, variant="vuw")
 rSDI plotting functions make use of available open map packages in the R ecosystem to make a geographical plot of SDI measurements. The `plotSDI()` function produces a visualization where the circles for each note has an area proportional to the node's selected SDI measure. The function will try to optimize the circle sizes as best as it can, but you can customize circle sizes, fill colors, etc. by overriding its parameters. For example you can scale the circles sizes relative to its default as:
 
 ```{r echo=T, eval=T}
-plot.SDI(TMSDI, variant="vuw", circle.size.scale=1)
+plotSDI(TMSDI, variant="vuw", circle.size.scale=1)
 ```
 
 Please refer to documentation of `plotSDI()` fur further fine grained control of its plotting parameters.
@@ -251,38 +250,38 @@ Please refer to documentation of `plotSDI()` fur further fine grained control of
 You may want to visualize the network flows along with the SDI index measurements. This particular combination is provided as a convenience. You can turn on the displaying of network edges using the 'edges' argument to SDO plotter:
 
 ```{r echo=T, eval=T}
-plot.SDI(TMSDI, variant="vuw", edges=TRUE)
+plotSDI(TMSDI, variant="vuw", edges=TRUE)
 ```
 
 Please note that this combination is based on several graph visualization and geospatial packages. If you need a fine control over all these underlying visualization layers you are recommended to go for a home made solution using packages such as ggraph, sf, and naturalearth.
 
-## Visualizing multiple indices
+<!-- ## Visualizing multiple indices -->
 
-Often one needs to visualize multiple SDI index calculations for comparison. In the TurkiyeMigration data set, for example, it is interesting to compare geographic dispersion of incoming and outgoing migration. In such a case first prepare the indices and then include them in plots:
+<!-- Often one needs to visualize multiple SDI index calculations for comparison. In the TurkiyeMigration data set, for example, it is interesting to compare geographic dispersion of incoming and outgoing migration. In such a case first prepare the indices and then include them in plots: -->
 
-```{r echo=T, eval=F}
-TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plot.SDI(TMSDI, variant=c("viw","vow"))
-```
+<!-- ```{r echo=T, eval=F} -->
+<!-- TMSDI <- SDI(TMgraph, variant=c("viw","vow")) -->
+<!-- plot(TMSDI, variant=c("viw","vow")) -->
+<!-- ``` -->
 
-While there is no limit to how many indices you can visualize on a single plot, it is generally not feasible to use more than two. This is because circles for each index is overlaid on to of one another with some opacity and too many overlays would not be much readable.
+<!-- While there is no limit to how many indices you can visualize on a single plot, it is generally not feasible to use more than two. This is because circles for each index is overlaid on to of one another with some opacity and too many overlays would not be much readable. -->
 
-Plot customization for multi-index plots works in a similar fashion to single index plots. However, certain visualization aspects can be customized on a per-index manner, whereas others can be customized for the whole plot only. For example, you can choose fill colors for your indices, by providing the in the same order with index variants:
+<!-- Plot customization for multi-index plots works in a similar fashion to single index plots. However, certain visualization aspects can be customized on a per-index manner, whereas others can be customized for the whole plot only. For example, you can choose fill colors for your indices, by providing the in the same order with index variants: -->
 
-```{r echo=T, eval=F}
-TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plot.SDI(TMSDI, variant=c("viw","vow"), 
-        circle.color=c("red","orange"))
-```
+<!-- ```{r echo=T, eval=F} -->
+<!-- TMSDI <- SDI(TMgraph, variant=c("viw","vow")) -->
+<!-- plot.SDI(TMSDI, variant=c("viw","vow"),  -->
+<!--         circle.color=c("red","orange")) -->
+<!-- ``` -->
 
-On the other hand, resizing and other aspects of circles are only at the whole plot level, because otherwise the visualization will not allow a relative comparison:
+<!-- On the other hand, resizing and other aspects of circles are only at the whole plot level, because otherwise the visualization will not allow a relative comparison: -->
 
-```{r echo=T, eval=F}
-TMSDI <- SDI(TMgraph, variant=c("viw","vow"))
-plot.SDI(TMSDI, variant=c("viw","vow"), 
-        circle.color=c("red","orange"),
-        circle.size.scale=1.4)
-```
+<!-- ```{r echo=T, eval=F} -->
+<!-- TMSDI <- SDI(TMgraph, variant=c("viw","vow")) -->
+<!-- plot.SDI(TMSDI, variant=c("viw","vow"),  -->
+<!--         circle.color=c("red","orange"), -->
+<!--         circle.size.scale=1.4) -->
+<!-- ``` -->
 
 # Custom visualization capabilities
 

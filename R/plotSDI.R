@@ -1,4 +1,4 @@
-#' plot.SDI generates a plot of the network and SDI metrics on a geographic map.
+#' plotSDI generates a plot of the network and SDI metrics on a geographic map.
 #'
 #' @param g The igraph object to be plotted, whose vertices have attributes corresponding to SDI metrices.
 #' @param variant The SDI variant with a prefix, such as "SDI_vuw", etc.
@@ -8,12 +8,13 @@
 #' @param edge.width.range If edges are to be drawn give a custom range of edge widths
 #'
 #' @return returns a ggplot2 plot
-#' @export
 #'
 #' @examples
 #' TMSDI <- SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
-#' plot.SDI(TMSDI, variant="vuw", circle.size.scale=1)
-plot.SDI <- function(g, variant="", circle.size.scale=1, circle.color="red", edges=FALSE, edge.width.range=c(0.01, 0.5)) {
+#' plotSDI(TMSDI, variant="vuw", circle.size.scale=1)
+#'
+#' @export
+plotSDI <- function(g, variant="", circle.size.scale=1, circle.color="red", edges=FALSE, edge.width.range=c(0.01, 0.5)) {
   if (!requireNamespace("igraph", quietly = TRUE)) {stop("igraph is required")}
   if (!requireNamespace("ggplot2", quietly = TRUE)) {stop("ggplot2 is required")}
   if (!requireNamespace("ggraph", quietly = TRUE)) {stop("ggraph is required")}

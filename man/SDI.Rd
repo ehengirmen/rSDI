@@ -53,4 +53,5 @@ weighted undirected SDI for the vertex. If variant is a vector each value indica
 }
 \examples{
 SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
+
 }

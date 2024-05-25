@@ -6,7 +6,11 @@
 #' @return a vector of vertex SDI values
 #' @export
 #'
-#' #@examples
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraphWithSDI <- unweightedAllVerticesSDI(toyGraph)
 unweightedAllVerticesSDI <- function (g, mode="all") {
   sdi <- function(v) {unweightedSingleVertexSDI(g,v,mode=mode)}
   unlist(  lapply(igraph::V(g), sdi  )  )
@@ -19,7 +23,11 @@ unweightedAllVerticesSDI <- function (g, mode="all") {
 #' @return a numerical SDI value
 #' @export
 #'
-#' #@examples
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraphWithSDI <- unweightedNetworkSDI(toyGraph)
 unweightedNetworkSDI <- function(g) {
   edges <- igraph::E(g)
   sum(edges$distance)/length(edges)
@@ -34,8 +42,13 @@ unweightedNetworkSDI <- function(g) {
 #' @return a numerical SDI value
 #' @export
 #'
-#' #@examples
-unweightedSingleVertexSDI <- function(g, v, mode=all) {
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraph <- dist_calc(toyGraph)
+#' toyGraphWithSDI <- unweightedSingleVertexSDI(toyGraph,igraph::V(toyGraph)[1])
+unweightedSingleVertexSDI <- function(g, v, mode="all") {
   vedges<-igraph::incident(g,v,mode=mode)
   if (length(vedges)>0) {
     sum(vedges$distance)/length(vedges)
@@ -52,7 +65,11 @@ unweightedSingleVertexSDI <- function(g, v, mode=all) {
 #' @return a vector of vertex SDI values
 #' @export
 #'
-#' #@examples
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraphWithSDI <- weightedAllVerticesSDI(toyGraph)
 weightedAllVerticesSDI <- function (g, mode="all") {
   sdi <- function(v) {weightedSingleVertexSDI(g,v,mode=mode)}
   unlist(  lapply(igraph::V(g), sdi  )  )
@@ -65,7 +82,11 @@ weightedAllVerticesSDI <- function (g, mode="all") {
 #' @return a numerical SDI value
 #' @export
 #'
-#' #@examples
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraphWithSDI <- weightedNetworkSDI(toyGraph)
 weightedNetworkSDI <- function(g) {
   edges <- igraph::E(g)
   sum(edges$weight*edges$distance)/sum(edges$weight)
@@ -80,8 +101,12 @@ weightedNetworkSDI <- function(g) {
 #' @return a numerical SDI value
 #' @export
 #'
-#' #@examples
-weightedSingleVertexSDI <- function(g, v, mode=all) {
+#' @examples
+#' flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
+#' nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
+#' toyGraph <- igraph::graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
+#' toyGraphWithSDI <- weightedSingleVertexSDI(toyGraph,igraph::V(toyGraph)[1])
+weightedSingleVertexSDI <- function(g, v, mode="all") {
   vedges<-igraph::incident(g,v,mode=mode)
   if (length(vedges)>0) {
     sum(vedges$weight*vedges$distance)/sum(vedges$weight)

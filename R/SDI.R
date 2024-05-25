@@ -24,9 +24,10 @@
 #' @param alpha Optional parameter used for generalized SDI calculations.
 #'
 #' @return An igraph object with SDI attributes added. The class of the object includes 'SDI'.
-#' @export
 #' @examples
 #' SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vuw")
+#'
+#' @export
 SDI <- function (flows, nodes = NULL,  distance.calculation = NULL, level = "vertex",
                           weight.use = "weighted", directionality = "undirected",
                           variant = NULL, alpha = NULL) {
