@@ -1,6 +1,6 @@
 Package: rSDI
 Type: Package
-Title: Spatial Dispersion Index (SDI) family of metrics for spatial/geographic networks
+Title: Spatial Dispersion Index (SDI) Family of Metrics for Spatial/Geographic Networks
 Version: 0.2.0
 Authors@R: c(
     person("Mehmet", "Gençer", email= "mehmetgencer@yahoo.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-1717-8668")),
@@ -10,7 +10,7 @@ Authors@R: c(
 URL: https://github.com/ehengirmen/rSDI
 BugReports: https://github.com/ehengirmen/rSDI/issues
 Maintainer: Mehmet Gençer <mehmetgencer@yahoo.com>
-Description: Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial dispersion of movements/flows in a network in a problem neutral way.     rSDI computes and optionally visualizes this index with minimal hassle.
+Description: Spatial Dispersion Index (SDI) is a generalized measurement index, or rather a family of indices to evaluate spatial dispersion of movements/flows in a network in a problem neutral way.     This package computes and optionally visualizes this index with minimal hassle.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
