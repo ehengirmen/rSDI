@@ -1,3 +1,9 @@
+## Resubmission
+
+This is a resubmission. In this patch version we have:
+
+* Cleaned up print() commands from code (R/dist_calc.R) that dumped debug related messages to console.
+
 ## R CMD check results
 
 0 errors | 0 warnings | 1 note
@@ -14,7 +20,6 @@
   This note is related to a citation in the package description.
   
 * This is a new release.
-* This is a first submission.
 
 ## revdepcheck results
 

@@ -52,8 +52,6 @@ dist_calc <- function(g, formula = NULL) {
     } else if (('latitude' %in% vertexAttrsNew) && ('longitude' %in% vertexAttrsNew)){
       formula <- 'Haversine'
     } else {
-      print("Vertex attribute names:")
-      print(vertexAttrsNew)
       stop(paste("The igraph object must have a combination of 'x' and 'y',
            or 'latitude' and 'longitude' vertex attributes for distance to
            be calculated. Available attribute names are:",vertexAttrsNew))

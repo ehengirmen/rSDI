@@ -1,7 +1,7 @@
 Package: rSDI
 Type: Package
 Title: Spatial Dispersion Index (SDI) Family of Metrics for Spatial/Geographic Networks
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
     person('Mehmet', 'Gençer', email= 'mehmetgencer@yahoo.com', role = c('aut', 'cre', 'cph'), comment = c(ORCID = '0000-0003-1717-8668')),
     person('Mücahit', 'Zor', email='mucahit.zor01@gmail.com', role = c('aut')),
