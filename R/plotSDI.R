@@ -38,7 +38,7 @@ plotSDI <- function(g, variant="", circle.size.scale=1, circle.color="red", edge
   }
   p+
     ggraph::geom_node_point(size = normalsize*circle.size.scale, ggplot2::aes(color=circle.color),alpha=0.4)+
-    ggplot2::theme(legend.position = "none")
-  #p+coord_fixed()
+    ggplot2::theme(legend.position = "none")+
+    coord_fixed(ratio=1.65) #Fixes aspect ratio problem of geographic graphs
 }
 
