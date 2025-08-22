@@ -40,7 +40,7 @@ SDI(TurkiyeMigration.flows, TurkiyeMigration.nodes, variant="vow") %>% plotSDI(v
 ```
 
 
-The core idea of the SDI index was conceived as part of a large scale government commissioned   [study report, in Turkish](https://www.kalkinmakutuphanesi.gov.tr/dokuman/yer-sis-iller-ve-bolgeler-arasi-sosyo-ekonomik-ag-iliskileri-raporu/2591) [@Gencer2021], whose results are yearly updated with new data and is available as a live analysis at <https://yersis.gov.tr/web>. The SDI index was later was generalized and published on its own merit, and explained in detail [in the paper](https://dx.doi.org/10.1007/s12061-023-09545-8) [@gencer2023sdi].
+The core idea of the SDI index was conceived as part of a large scale government commissioned study report, in Turkish [@Gencer2021]. The SDI index was later was generalized and published on its own merit, and explained in detail in the paper [@gencer2023sdi].
 
 rSDI package provides functions to compute SDI family of indices for spatial graphs in conjunction with its definition the paper [@gencer2023sdi]. rSDI also provides some convenience functions to visualize SDI index measurements. While this is not its primary reason of existence it is often very practical for the user to have some preliminary visualization at arm's length. In sections 2 and 3 below we first explain the concept of spatial networks and their data, then review mathematical graph formalism to represent spatial networks. Then we introduce the SDI index family's calculation, its interpretation, and thumb rules for choosing an index for your analyses. The last two sections provide a run through of index calculation then visualization features of the rSDI package using an example data set provided by the package, on human migration between provinces of Turkiye.
 
@@ -59,8 +59,6 @@ library(igraph)
 g<-graph_from_data_frame(flows, directed=TRUE, vertices=nodes)
 library(ggplot2)
 library(ggraph)
-library(ggimage)
-url<-"https://static.wikia.nocookie.net/lotr/images/5/59/Middle-earth.jpg/revision/latest?cb=20060726004750"
 
 lay <- create_layout(g, 'manual', x=V(g)$x, y=V(g)$y)
 p<-ggraph(lay) +
@@ -69,7 +67,9 @@ p<-ggraph(lay) +
   geom_node_point(size=10)+
   geom_node_text(label=V(g)$name, size=10, vjust=-0.7,hjust=1)+
   xlim(-3,5)+ylim(-2,4)
-p<-ggbackground(p, url) #see https://stackoverflow.com/questions/51255832/how-to-add-an-image-on-ggplot-background-not-the-panel
+#if (RCurl::url.exists(url)) {
+#  p<-ggbackground(p, url) #see how-to-add-an-image-on-ggplot-background-not-the-panel on stackoverflow
+#}
 ```
 
 ```{r , fig.show="hold", out.width="50%"}
@@ -98,7 +98,7 @@ In the case of a more local spatial network we would probably have Cartesian coo
 \delta^E_{ij}=\sqrt{(x_i-x_j)^2+(y_i-y_j)^2}
 \end{equation}
 
-In our toy example from the previous section the Euclidean distances can be easily calculated (since it is a simple 3-4-5 triangle) for each edge as follows (defaulting to Euclidean distance for Middle Earth, since we have no latitude/longitude information about it):
+In our toy example from the previous section the Euclidean distances can be easily calculated (since it is a simple 3-4-5 triangle) for each edge as follows (defaulting to Euclidean distance, since we have no latitude/longitude information in this example):
 ```{r}
 knitr::kable(flowsWithDistances,booktabs = TRUE, valign = 't',caption = 'The flow data with distances between the source and target location of  flows added')
 ```
@@ -283,28 +283,6 @@ Please note that this combination is based on several graph visualization and ge
 <!--         circle.size.scale=1.4) -->
 <!-- ``` -->
 
-# Custom visualization capabilities
 
-The visualization features of rSDI mainly leverages the fact that spatial graphs are often geospatial, and thus one can make use of geospatial libraries in R in combination with graph plotting to visualize these networks on a map. Current version of rSDI does not provide a capability to use your own map, for example when working with a network of flows within a production plant, a schoolyard, etc. Following example is provided for your convenience which can be adapted to your use case. It uses a custom visual as the background of network plot:
-
-```{r echo=T}
-flows<-data.frame(from=c("A","B","A"), to=c("B","A","C"), weight=c(10,20,5))
-nodes<-data.frame(id=c("A","B","C","D"),x=c(0,4,0,4),y=c(3,0,0,3))
-g <- SDI(flows,nodes, variant="vuw")
-library(ggplot2)
-library(ggraph)
-library(ggimage)
-url<-"https://static.wikia.nocookie.net/lotr/images/5/59/Middle-earth.jpg/revision/latest?cb=20060726004750"
-
-lay <- create_layout(g, 'manual', x=V(g)$x, y=V(g)$y)
-p<-ggraph(lay) +
-  geom_edge_bend(aes(label=E(g)$weight), label_size=10,strength=0.4,edge_width=3,alpha=0.3,arrow = arrow(length = unit(10, 'mm')))+
-  #geom_node_point(size = 10, aes(color="yellow"),alpha=0.4) +
-  geom_node_point(aes(size=V(g)$SDI_vuw),color="red")+
-  geom_node_text(label=V(g)$name, size=10, vjust=-0.7,hjust=1)+
-  xlim(-3,5)+ylim(-2,4)
-p<-ggbackground(p, url) 
-p
-```
 
 # References
